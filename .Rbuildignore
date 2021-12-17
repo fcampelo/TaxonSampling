@@ -1,2 +1,14 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^cran-comments.md$
+docs$
+^doc$
+^Meta$
+^CRAN-RELEASE$
+^results$
+^data$
+^tmp$
+^tests$
+^LICENSE$
+^\.github$
+^inst/utils
