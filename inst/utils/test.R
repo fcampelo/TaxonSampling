@@ -1,18 +1,27 @@
+library(dplyr)
+
 #path to tabular file linking NCBI taxon IDs to sequence IDs
 ids_file <- "data_files/metadata/TaxID2SeqID.txt"
 
 # path to NCBI taxonomy files (execute "install.sh" to automatically download them)
 taxonomy_path <- "data_files/taxdump/"
 
-outlist <- get_taxonomy_data(ids_file = ids_file, taxonomy_path = taxonomy_path)
+#path to file linking NCBI taxon IDs to sequence IDs
+spp_file <- "data_files/metadata/TaxID2sppCounts.tsv"
 
+taxlist <- get_taxonomy_counts(taxonomy_path, ids_file) %>%
+  get_species_counts(spp_file = spp_file)
+
+print("Computing species count per taxon")
+#count how many known spp per node
+countSpp <- TS_SpeciesData(knownSppFile, countIDs)
+print("Done.")
 
 
 #path to multi-fasta file from where sequences should be sampled
 multifasta <- "data_files/fasta/mit_vertebrata.fasta"
 
-#path to file linking NCBI taxon IDs to sequence IDs
-knownSppFile <- "data_files/metadata/TaxID2sppCounts.tsv"
+
 
 #output directory
 outDir <- "results/"
@@ -73,15 +82,9 @@ ignoreNonLeafID <- NULL
 #allow TS to repeat IDs if needed? ('no' is better to get a higher diversity)
 replacement <- "no"
 
-#get all nodes from NCBI taxonomy
-print("Parsing NCBI Taxonomy data")
-nodes <- suppressMessages(getnodes(taxondir))
-print("Done.")
 
-print("Computing sequence counts per taxon")
-#count how many sequences per node
-countIDs <- TS_TaxonomyData(idsFile, nodes)
-print("Done.")
+
+
 
 print("Computing species count per taxon")
 #count how many known spp per node
