@@ -15,7 +15,7 @@ outDir <- "results/"
 #path to output file
 outFile <- paste0(outDir, "/output_TS.fasta")
 
-#path to NCBI taxonomy files (execute "install.sh" to automatically download them)
+# path to NCBI taxonomy files (execute "install.sh" to automatically download them)
 taxondir <- "data_files/taxdump/"
 
 

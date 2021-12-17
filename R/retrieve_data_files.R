@@ -1,13 +1,10 @@
 #' Retrieve data files from the Github repository
 #'
-#' This script downloads relevant data files from the CALANGO project
+#' This script downloads relevant data files from the TaxonSampling project
 #' repository. It will extract the data into a folder containing
-#' directories related to dictionary files, Gene Ontology annotation
-#' files, tree files, etc. Note: you may need to edit the file paths in the 
-#' example scripts contained under the `parameters` subfolder of `target.dir`, 
-#' or pass an appropriate base path using parameter `basedir` in [run_CALANGO()].
-#'
-#' If the `target.dir` provided does not exist it is created
+#' directories related multi-fasta files from where sequences should be sampled
+#' and metadata files (e.g., table linking NCBI taxon IDs to sequence IDs,
+#' etc.). If the `target.dir` provided does not exist it is created
 #' (recursively) by the function.
 #'
 #' @param target.dir path to the folder where the files will be saved (
@@ -24,9 +21,9 @@
 #'
 #' @examples
 #' \dontrun{
-#'   CALANGO::retrieve_data_files(target.dir = "./data")
+#'   TaxonSampling::retrieve_data_files(target.dir = "data_files/")
 #' }
-#' 
+#'
 #' @return No return value, called for side effects (see Description).
 
 retrieve_data_files <- function(target.dir,
@@ -35,8 +32,7 @@ retrieve_data_files <- function(target.dir,
                                 ...){
 
   # ================== Sanity checks ==================
-  assertthat::assert_that(is.character(target.dir),
-                          length(url) == 1)
+  assertthat::assert_that(is.character(target.dir))
 
   if(!dir.exists(target.dir)){
     dir.create(target.dir, recursive = TRUE)
@@ -44,9 +40,9 @@ retrieve_data_files <- function(target.dir,
     filelist <- dir(target.dir, full.names = TRUE)
     unlink(filelist, recursive = TRUE, force = TRUE)
   }
-  
-  url <- "https://github.com/fcampelo/CALANGO/raw/master/inst/extdata/Examples.zip"
-  
+
+  url <- "https://github.com/fcampelo/TaxonSampling/raw/master/data/data.zip"
+
   res1 <- utils::download.file(url,
                                quiet    = TRUE,
                                destfile = paste0(target.dir, "/tmpdata.zip"),
@@ -58,7 +54,7 @@ retrieve_data_files <- function(target.dir,
                unzip = unzip,
                exdir = target.dir)
   unlink(paste0(target.dir, "/__MACOSX"), recursive = TRUE, force = TRUE)
-  
+
   file.remove(paste0(target.dir, "/tmpdata.zip"))
 
   invisible(TRUE)
