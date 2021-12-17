@@ -96,6 +96,11 @@ get_taxonomy_counts <- function(taxonomy_path, ids_file = NULL, ids_df = NULL,
 
   countIDs <- countIDs[countIDs > 0]
 
+  # Reduces the search size of nodes to the relevant input taxIDs and their
+  # related ancestors/offsprings. Can greatly reduce search/running time for
+  # the remaining functions.
+  nodes <- nodes[nodes$id %in% as.numeric(names(countIDs)), 1:2]
+
   outlist <- list(nodes    = nodes,
                   countIDs = countIDs)
   class(outlist) <- c(class(outlist), "taxlist")
