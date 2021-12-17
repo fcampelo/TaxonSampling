@@ -39,4 +39,5 @@
 # results/
 /doc/
 /Meta/
-data/
+data_files/
+tmp/data

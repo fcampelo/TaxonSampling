@@ -1,32 +1,22 @@
-#-----------------------------------------------------------------------------#
-# Parameters for the analysis, uncomment and edit them if you prefer to leave
-# it automated for future use.
-
-#Root dir where TS is installed
-
-setwd("/Users/chico/projects/TaxonSampling/TS/")
-
-
-
 ## Input/output files
 
 #path to tabular file linking NCBI taxon IDs to sequence IDs
-idsFile <- "data/metadata/TaxID2SeqID.txt"
+idsFile <- "data_files/metadata/TaxID2SeqID.txt"
 
 #path to multi-fasta file from where sequences should be sampled
-multifasta <- "data/fasta/mit_vertebrata.fasta"
+multifasta <- "data_files/fasta/mit_vertebrata.fasta"
 
 #path to file linking NCBI taxon IDs to sequence IDs
-knownSppFile <- "data/metadata/TaxID2sppCounts.tsv"
+knownSppFile <- "data_files/metadata/TaxID2sppCounts.tsv"
 
 #output directory
 outDir <- "results/"
 
 #path to output file
-outFile <- paste0(outDir, "output_TS.fasta")
+outFile <- paste0(outDir, "/output_TS.fasta")
 
 #path to NCBI taxonomy files (execute "install.sh" to automatically download them)
-taxondir <- "data/taxdump/"
+taxondir <- "data_files/taxdump/"
 
 
 ## Parameters for TS
@@ -91,7 +81,7 @@ countIDs <- TS_TaxonomyData(idsFile, nodes)
 print("Done.")
 
 print("Computing species count per taxon")
-#count how many known spp per node 
+#count how many known spp per node
 countSpp <- TS_SpeciesData(knownSppFile, countIDs)
 print("Done.")
 
