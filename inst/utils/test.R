@@ -1,7 +1,12 @@
-## Input/output files
-
 #path to tabular file linking NCBI taxon IDs to sequence IDs
-idsFile <- "data_files/metadata/TaxID2SeqID.txt"
+ids_file <- "data_files/metadata/TaxID2SeqID.txt"
+
+# path to NCBI taxonomy files (execute "install.sh" to automatically download them)
+taxonomy_path <- "data_files/taxdump/"
+
+outlist <- get_taxonomy_data(ids_file = ids_file, taxonomy_path = taxonomy_path)
+
+
 
 #path to multi-fasta file from where sequences should be sampled
 multifasta <- "data_files/fasta/mit_vertebrata.fasta"
@@ -15,8 +20,6 @@ outDir <- "results/"
 #path to output file
 outFile <- paste0(outDir, "/output_TS.fasta")
 
-# path to NCBI taxonomy files (execute "install.sh" to automatically download them)
-taxondir <- "data_files/taxdump/"
 
 
 ## Parameters for TS
