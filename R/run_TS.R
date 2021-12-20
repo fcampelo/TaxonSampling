@@ -60,21 +60,16 @@ run_TS <- function(taxlist, taxon, m, method = "diversity",
 
   # ===========================================================================
 
-  # Process ignoreIDs and ignoreNonLeafID
+  # Process ignoreIDs, ignoreNonLeafIDs and requireIDs
   taxlist <- process_ignoreIDs(taxlist, ignoreIDs)
   taxlist <- process_ignoreNonLeafIDs(taxlist, ignoreNonLeafIDs)
+
+  requireIDs <- process_requireIDs(taxlist, requireIDs)
+
 
 
   if (!is.null(requireIDs)) {
     requireIDs <- as.integer(requireIDs)
-
-    # Sanity check: only IDs that are present in the input.
-    if (!all(is.element(requireIDs, nodes$id))) {
-      cat("Warning: the following required IDs are not part of your input",
-          "and will be ignored.\n",
-          requireIDs[!is.element(requireIDs, nodes$id)], "\n")
-      requireIDs <- requireIDs[is.element(requireIDs, nodes$id)]
-    }
 
     # Sanity check: remove IDs that has any ignoreIDs as its parent.
     if (!all(is.element(requireIDs, names(countIDs)))) {

@@ -80,20 +80,6 @@ replacement <- "no"
 
 
 
-
-
-print("Computing species count per taxon")
-#count how many known spp per node
-countSpp <- TS_SpeciesData(knownSppFile, countIDs)
-print("Done.")
-
-print("Simplifying taxonomic space")
-#simplify taxonomic space by
-#1) removing nodes that are not children of root node
-#2) removing nodes that have no sequences to be sampled in current sequence database
-nodes <- Simplify_Nodes(nodes, countIDs)
-print("Done.")
-
 #list to store output IDs
 outputIDs1 <- list()
 

@@ -19,6 +19,10 @@
 #' <ftp://ftp.ncbi.nih.gov/pub/taxonomy/> or retrieved using
 #' [retrieve_NCBI_taxonomy()]).
 #' @param verbose logical: regulates function echoing to console.
+#' @param nodes data.frame containing the pre-processed information about
+#'     the NCBI taxonomy structure. This is generated either by using
+#'     [CHNOSZ::getnodes()], or as a result of a previous call to this
+#'     function. If `nodes` is not `NULL` then `taxonomy_path` is ignored.
 #'
 #' @return list object containing:
 #' \itemize{
@@ -31,7 +35,10 @@
 #'
 #' @export
 
-get_taxonomy_counts <- function(taxonomy_path, ids_file = NULL, ids_df = NULL,
+get_taxonomy_counts <- function(taxonomy_path = NULL,
+                                ids_file = NULL,
+                                ids_df = NULL,
+                                nodes = NULL,
                                 verbose = TRUE) {
 
   # ===========================================================================
@@ -40,11 +47,13 @@ get_taxonomy_counts <- function(taxonomy_path, ids_file = NULL, ids_df = NULL,
                           is.null(ids_file) ||
                             (is.character(ids_file) && length(ids_file) == 1),
                           (is.null(ids_df) + is.null(ids_file)) < 2,
-                          is.character(taxonomy_path),
-                          length(taxonomy_path) == 1,
-                          dir.exists(taxonomy_path),
+                          is.null(taxonomy_path) ||
+                            (is.character(taxonomy_path) &&
+                               length(taxonomy_path) == 1 &&
+                               dir.exists(taxonomy_path)),
                           is.logical(verbose),
-                          length(verbose) == 1)
+                          length(verbose) == 1,
+                          is.null(nodes) || is.data.frame(nodes))
 
   # Load ids from file if required
   if(!is.null(ids_file) && !file.exists(ids_file)){
@@ -59,8 +68,10 @@ get_taxonomy_counts <- function(taxonomy_path, ids_file = NULL, ids_df = NULL,
   # ===========================================================================
 
   # Extract all nodes from NCBI taxonomy
-  if(verbose) message("Parsing NCBI Taxonomy data")
-  nodes <- suppressMessages(CHNOSZ::getnodes(taxonomy_path))
+  if(is.null(nodes)){
+    if(verbose) message("Parsing NCBI Taxonomy data")
+    nodes <- suppressMessages(CHNOSZ::getnodes(taxonomy_path))
+  }
 
   # Filter IDs that aren't part of NCBI notation.
   idx <- which(!(ids_df[, 1] %in% nodes$id))
