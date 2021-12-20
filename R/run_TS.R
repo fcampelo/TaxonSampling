@@ -33,7 +33,7 @@
 run_TS <- function(taxlist, taxon, m, method = "diversity",
                    randomize = "no", replacement = FALSE,
                    ignoreIDs = NULL, requireIDs = NULL,
-                   ignoreNonLeafID = NULL, sampling = "agnostic") {
+                   ignoreNonLeafIDs = NULL, sampling = "agnostic") {
 
   # ===========================================================================
   # Sanity checks
@@ -47,52 +47,23 @@ run_TS <- function(taxlist, taxon, m, method = "diversity",
                           length(replacement) == 1,
                           is.null(ignoreIDs) || is.numeric(ignoreIDs) || is.character(ignoreIDs),
                           is.null(requireIDs) || is.numeric(requireIDs) || is.character(requireIDs),
-                          is.null(ignoreNonLeafID) || is.numeric(ignoreNonLeafID) || is.character(ignoreNonLeafID),
+                          is.null(ignoreNonLeafIDs) || is.numeric(ignoreNonLeafIDs) || is.character(ignoreNonLeafIDs),
                           is.character(sampling),
                           length(sampling) == 1,
                           sampling %in% c("agnostic", "known_species"))
 
   # Force IDs to integer vectors
-  if(is.character(taxon))           taxon           <- as.integer(taxon)
-  if(is.character(ignoreIDs))       ignoreIDs       <- as.integer(ignoreIDs)
-  if(is.character(requireIDs))      requireIDs      <- as.integer(requireIDs)
-  if(is.character(ignoreNonLeafID)) ignoreNonLeafID <- as.integer(ignoreNonLeafID)
+  if(is.character(taxon)) taxon <- as.integer(taxon)
+  if(is.character(ignoreIDs)) ignoreIDs <- as.integer(ignoreIDs)
+  if(is.character(requireIDs)) requireIDs <- as.integer(requireIDs)
+  if(is.character(ignoreNonLeafIDs)) ignoreNonLeafIDs <- as.integer(ignoreNonLeafIDs)
 
   # ===========================================================================
 
-  # Process ignoreIDs
+  # Process ignoreIDs and ignoreNonLeafID
   taxlist <- process_ignoreIDs(taxlist, ignoreIDs)
+  taxlist <- process_ignoreNonLeafIDs(taxlist, ignoreNonLeafIDs)
 
-  if (!is.null(ignoreNonLeafID)) {
-    ignoreNonLeafID <- as.integer(ignoreNonLeafID)
-
-    # Sanity check: filter IDs that aren't part of NCBI notation.
-    if (!all(is.element(ignoreNonLeafID, nodes$id))) {
-      cat("Warning: the following inputs are not part of NCBI taxonomy IDs",
-          "and will be ignored.\n",
-          ignoreNonLeafID[!is.element(ignoreNonLeafID, nodes$id)], "\n")
-      ignoreNonLeafID <- ignoreNonLeafID[is.element(ignoreNonLeafID, nodes$id)]
-    }
-
-    # Sanity check: unique ID inputs, remove duplicates.
-    if (any(duplicated(ignoreNonLeafID))) {
-      cat("Warning: some required IDs are repeated,",
-          "using only one instance of each.\n",
-          ignoreNonLeafID[duplicated(ignoreNonLeafID)], "\n")
-      ignoreNonLeafID <- unique(ignoreNonLeafID)
-    }
-
-    # Make sure every ignoreNonLeafID is not a leaf node
-    # (i.e. not just a consequence of its children).
-    for (id in ignoreNonLeafID) {
-      children <- nodes$id[nodes$parent == id & nodes$id != id]
-      children <- intersect(children, names(countIDs))
-      childrenSum <- sum(countIDs[as.character(children)])
-      if (childrenSum > 0 & childrenSum < countIDs[as.character(id)]) {
-        countIDs[as.character(id)] <- childrenSum
-      }
-    }
-  }
 
   if (!is.null(requireIDs)) {
     requireIDs <- as.integer(requireIDs)

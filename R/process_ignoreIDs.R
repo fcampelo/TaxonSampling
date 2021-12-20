@@ -4,7 +4,7 @@ process_ignoreIDs <- function(taxlist, ignoreIDs) {
     idx <- which(!(ignoreIDs %in% taxlist$nodes$id))
     if (length(idx) > 0) {
       warning("The following IDs are not found in the NCBI taxonomy files and will be ignored:\n",
-              paste(ignoreIDsf[idx], collapse = "\n"))
+              paste(ignoreIDs[idx], collapse = "\n"))
       ignoreIDs <- ignoreIDs[-idx, ]
     }
 
