@@ -9,7 +9,28 @@ taxonomy_path <- "data_files/taxdump/"
 #path to file linking NCBI taxon IDs to sequence IDs
 spp_file <- "data_files/metadata/TaxID2sppCounts.tsv"
 
-taxlist <- get_taxonomy_counts(taxonomy_path, ids_file) %>%
+#mammalia
+taxon <- 40674
+
+#whether/how to randomize (options are "yes", "no" and "after_first_round")
+randomize <- "after_first_round"
+
+#sampling procedure (either "agnostic" or "known_species")
+sampling <- "agnostic"
+
+#number of sequences to sample
+m <- 200
+
+#IDs to be ignored during sampling procedure (either terminal or internal taxa)
+ignoreIDs <- 8364
+ignoreNonLeafIDs <- NULL
+
+#required IDs to be present in final output file (only terminal taxa - species)
+requireIDs <- c(2026169, 57393, 241292, 61967)
+
+
+taxlist <- get_taxonomy_counts(taxonomy_path = taxonomy_path,
+                               ids_file      = ids_file) %>%
   get_species_counts(spp_file = spp_file)
 
 
@@ -24,37 +45,6 @@ outDir <- "results/"
 #path to output file
 outFile <- paste0(outDir, "/output_TS.fasta")
 
-
-
-## Parameters for TS
-
-# where should we start looking? (root node where to start algorithm)
-
-#mammalia
-root_taxon <- 40674
-
-#vertebrata
-#root_taxon <- 7742
-
-#whether/how to randomize (options are "yes", "no" and "after_first_round")
-#randomize <- "yes"
-#randomize <- "no"
-randomize <- "after_first_round"
-
-#sampling procedure (either "agnostic" or "known_species")
-sampling <- "agnostic"
-#sampling <- "known_species"
-
-#number of sequences to sample
-m <- 200
-
-#IDs to be ignored during sampling procedure (either terminal or internal taxons)
-ignoreIDs <- 8364 #NULL
-
-#required IDs to be present in final output file (only terminal taxa - species)
-requireIDs <- c(2026169, 57393, 241292, 61967)
-#requireIDs <- c(2026169, 8364, 57393, 241292, 61967)
-#requireIDs <- NULL
 
 
 #from here on, users do not need to edit this file

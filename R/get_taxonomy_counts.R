@@ -4,25 +4,25 @@
 #' returns the count of each taxon ID with non-zero occurrences in the
 #' taxonomy graph.
 #'
-#' @param ids_df two-column data frame with the input taxon IDs in the first
-#' column, and the corresponding sequence IDs (corresponding
-#' to the ID strings int the multifasta input file, without
-#' the ">" line starter) in the second column. Ignored if
-#' `ids_file` is not `NULL`.
+#' @param taxonomy_path path to folder containing the NCBI taxonomy files
+#' (i.e., the contents of _taxdump.zip_, which can be downloaded from
+#' <ftp://ftp.ncbi.nih.gov/pub/taxonomy/> or retrieved using
+#' [retrieve_NCBI_taxonomy()]).
 #' @param ids_file path to a tab-separated file containng two two columns,
 #' with the input taxon IDs in the first
 #' column, and the corresponding sequence IDs (corresponding
 #' to the ID strings int the multifasta input file, without
 #' the ">" line starter) in the second column.
-#' @param taxonomy_path path to folder containing the NCBI taxonomy files
-#' (i.e., the contents of _taxdump.zip_, which can be downloaded from
-#' <ftp://ftp.ncbi.nih.gov/pub/taxonomy/> or retrieved using
-#' [retrieve_NCBI_taxonomy()]).
+#' @param ids_df two-column data frame with the input taxon IDs in the first
+#' column, and the corresponding sequence IDs (corresponding
+#' to the ID strings int the multifasta input file, without
+#' the ">" line starter) in the second column. Ignored if
+#' `ids_file` is not `NULL`.
 #' @param verbose logical: regulates function echoing to console.
 #' @param nodes data.frame containing the pre-processed information about
-#'     the NCBI taxonomy structure. This is generated either by using
-#'     [CHNOSZ::getnodes()], or as a result of a previous call to this
-#'     function. If `nodes` is not `NULL` then `taxonomy_path` is ignored.
+#' the NCBI taxonomy structure. This is generated either by using
+#' [CHNOSZ::getnodes()], or as a result of a previous call to this
+#' function. If `nodes` is not `NULL` then `taxonomy_path` is ignored.
 #'
 #' @return list object containing:
 #' \itemize{
@@ -43,7 +43,8 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
 
   # ===========================================================================
   # Sanity checks
-  assertthat::assert_that(is.null(ids_df) || is.data.frame(ids_df),
+  assertthat::assert_that(is.null(ids_df) ||
+                            (is.data.frame(ids_df) && nrow(ids_df) > 0),
                           is.null(ids_file) ||
                             (is.character(ids_file) && length(ids_file) == 1),
                           (is.null(ids_df) + is.null(ids_file)) < 2,
@@ -56,21 +57,23 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
                           is.null(nodes) || is.data.frame(nodes))
 
   # Load ids from file if required
-  if(!is.null(ids_file) && !file.exists(ids_file)){
-    stop("File ", ids_file, " not found.")
-  } else {
-    ids_df <- utils::read.table(ids_file, sep = "\t", header = FALSE)
+  if(!is.null(ids_file)) {
+    if(file.exists(ids_file)){
+      ids_df <- utils::read.table(ids_file, sep = "\t", header = FALSE)
+    } else {
+      stop("File ", ids_file, " not found.")
+    }
   }
-
-  # Assert data frame size
-  assertthat::assert_that(nrow(ids_df) > 0 && ncol(ids_df) == 2)
 
   # ===========================================================================
 
   # Extract all nodes from NCBI taxonomy
   if(is.null(nodes)){
     if(verbose) message("Parsing NCBI Taxonomy data")
-    nodes <- suppressMessages(CHNOSZ::getnodes(taxonomy_path))
+    # capture.output to prevent undesired echoing of getnodes() to console
+    .ignore <- utils::capture.output({
+      nodes <- CHNOSZ::getnodes(taxonomy_path)
+    }, type = "message")
   }
 
   # Filter IDs that aren't part of NCBI notation.
@@ -113,9 +116,9 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
   # the remaining functions.
   nodes <- nodes[nodes$id %in% as.numeric(names(countIDs)), 1:2]
 
-  outlist <- list(nodes    = nodes,
+  taxlist <- list(nodes    = nodes,
                   countIDs = countIDs)
-  class(outlist) <- c(class(outlist), "taxlist")
+  class(taxlist) <- c(class(taxlist), "taxlist")
 
-  return(outlist)
+  return(taxlist)
 }
