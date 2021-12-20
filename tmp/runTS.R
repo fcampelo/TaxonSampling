@@ -91,7 +91,7 @@ countIDs <- TS_TaxonomyData(idsFile, nodes)
 print("Done.")
 
 print("Computing species count per taxon")
-#count how many known spp per node 
+#count how many known spp per node
 countSpp <- TS_SpeciesData(knownSppFile, countIDs)
 print("Done.")
 
@@ -101,6 +101,10 @@ print("Simplifying taxonomic space")
 #2) removing nodes that have no sequences to be sampled in current sequence database
 nodes <- Simplify_Nodes(nodes, countIDs)
 print("Done.")
+
+
+# ===== PAREI AQUI ===== #
+
 
 #list to store output IDs
 outputIDs1 <- list()

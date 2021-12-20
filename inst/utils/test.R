@@ -12,11 +12,6 @@ spp_file <- "data_files/metadata/TaxID2sppCounts.tsv"
 taxlist <- get_taxonomy_counts(taxonomy_path, ids_file) %>%
   get_species_counts(spp_file = spp_file)
 
-print("Computing species count per taxon")
-#count how many known spp per node
-countSpp <- TS_SpeciesData(knownSppFile, countIDs)
-print("Done.")
-
 
 #path to multi-fasta file from where sequences should be sampled
 multifasta <- "data_files/fasta/mit_vertebrata.fasta"
@@ -54,11 +49,12 @@ sampling <- "agnostic"
 m <- 200
 
 #IDs to be ignored during sampling procedure (either terminal or internal taxons)
-ignoreIDs <- NULL
+ignoreIDs <- 8364 #NULL
 
 #required IDs to be present in final output file (only terminal taxa - species)
+requireIDs <- c(2026169, 57393, 241292, 61967)
 #requireIDs <- c(2026169, 8364, 57393, 241292, 61967)
-requireIDs <- NULL
+#requireIDs <- NULL
 
 
 #from here on, users do not need to edit this file

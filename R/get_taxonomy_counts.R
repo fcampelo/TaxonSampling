@@ -93,6 +93,7 @@ get_taxonomy_counts <- function(taxonomy_path, ids_file = NULL, ids_df = NULL,
     countIDs[names(parentage)] <- countIDs[names(parentage)] + parentage
     searchIDs <- searchIDs[searchIDs != 1]
   }
+  if(verbose) cat("\n")
 
   countIDs <- countIDs[countIDs > 0]
 

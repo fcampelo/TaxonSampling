@@ -23,4 +23,3 @@ Encoding: UTF-8
 RoxygenNote: 7.1.1
 URL: https://github.com/fcampelo/TaxonSampling
 BugReports: https://github.com/fcampelo/TaxonSampling/issues/
-VignetteBuilder: knitr
