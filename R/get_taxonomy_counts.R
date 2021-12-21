@@ -117,7 +117,8 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
   nodes <- nodes[nodes$id %in% as.numeric(names(countIDs)), 1:2]
 
   taxlist <- list(nodes    = nodes,
-                  countIDs = countIDs)
+                  countIDs = countIDs,
+                  ids_df   = ids_df)
   class(taxlist) <- c(class(taxlist), "taxlist")
 
   return(taxlist)

@@ -25,11 +25,11 @@ process_requireIDs <- function(taxlist, ignoreIDs) {
 
     if (length(requireIDs) > 0) {
       requireIDs <- get_taxonomy_counts(ids_df = as.data.frame(requireIDs),
-                                        nodes = nodes)
+                                        nodes = taxlist$nodes)
     } else {
       requireIDs <- NULL
     }
 
-    return(requiredIDs)
+    return(requireIDs)
   }
 }

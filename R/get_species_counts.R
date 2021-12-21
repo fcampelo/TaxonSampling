@@ -58,6 +58,7 @@ get_species_counts <- function(taxlist,
   countSpp[countSpp == 0] <- 1
 
   # Update taxlist and return
+  taxlist$spp_df   <- spp_df
   taxlist$countSpp <- countSpp
   return(taxlist)
 

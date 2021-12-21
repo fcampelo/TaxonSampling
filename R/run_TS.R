@@ -61,61 +61,35 @@ run_TS <- function(taxlist, taxon, m, method = "diversity",
   # ===========================================================================
 
   # Process ignoreIDs, ignoreNonLeafIDs and requireIDs
-  taxlist <- process_ignoreIDs(taxlist, ignoreIDs)
-  taxlist <- process_ignoreNonLeafIDs(taxlist, ignoreNonLeafIDs)
-
+  taxlist    <- process_ignoreIDs(taxlist, ignoreIDs)
+  taxlist    <- process_ignoreNonLeafIDs(taxlist, ignoreNonLeafIDs)
   requireIDs <- process_requireIDs(taxlist, requireIDs)
 
-
-
-  if (!is.null(requireIDs)) {
-    requireIDs <- as.integer(requireIDs)
-
-    # Sanity check: remove IDs that has any ignoreIDs as its parent.
-    if (!all(is.element(requireIDs, names(countIDs)))) {
-      cat("Warning: the following required IDs are children or part of your",
-          "ignored IDs and will be ignored.\n",
-          requireIDs[!is.element(requireIDs, names(countIDs))], "\n")
-      requireIDs <- requireIDs[is.element(requireIDs, names(countIDs))]
-    }
-
-    # Sanity check: unique ID inputs, remove duplicates.
-    if (any(duplicated(requireIDs))) {
-      cat("Warning: some required IDs are repeated,",
-          "using only one instance of each.\n",
-          requireIDs[duplicated(requireIDs)], "\n")
-      requireIDs <- unique(requireIDs)
-    }
-
-    if (length(requireIDs) > 0) {
-      requireIDs <- TS_TaxonomyData(requireIDs, nodes)
-    } else {
-      requireIDs <- NULL
-      #      print("Here!")
-    }
-  }
-
-  # Reduce, once again, the node information to the necessary only,
-  # reduces search time.
-  Simplify_Nodes(nodes, countIDs)
+  # Reduce node information to the necessary only, reduces search time.
+  taxlist$nodes <- taxlist$nodes[taxlist$nodes$id %in% as.numeric(names(taxlist$countIDs)), 1:2]
 
   # Ensure m <= number of valid ids.
-  if (!is.null(idsFile) & isTRUE(file.exists(as.character(idsFile)))) { #parsing variable if file
-    ids <- read.table(idsFile, sep = "\t", header = FALSE, comment.char = "")
-    ids <- ids[, 1]
-  } else { #getting ids if list of IDs
-    ids <- as.integer(idsFile)  # assume it's a test.name or back.name, for now
-  }
-
-  if (m > length(intersect(ids, names(countIDs)))) {
-    m <- length(intersect(ids, names(countIDs)))
-  }
-
-
+  m <- min(m, length(intersect(taxlist$ids_df[, 1], names(taxlist$countIDs))))
 
   # Call the TS algorithm itself.
-  outputIDs <- TS_Algorithm_Recursion(taxon, m, nodes, countIDs, method,
-                                      randomize, replacement, ignoreIDs, requireIDs, ignoreNonLeafID, sampling)
+  outputIDs <- ts_recursive(taxon = taxon, m = m, taxlist = taxlist,
+                            method = method, randomize = randomize,
+                            replacement = replacement,
+                            ignoreIDs = ignoreIDs,
+                            requireIDs = requireIDs,
+                            ignoreNonLeafIDs = ignoreNonLeafIDs,
+                            sampling = sampling)
 
-  return(outputIDs)
+
+  # Assemble output list
+  taxlist$run_TS.params <- list(taxon = taxon, m = m, method = method,
+                                randomize = randomize,
+                                replacement = replacement,
+                                ignoreIDs = ignoreIDs, requireIDs = requireIDs,
+                                ignoreNonLeafIDs = ignoreNonLeafIDs,
+                                sampling = sampling)
+
+  taxlist$outputIDs <- outputIDs
+
+  return(taxlist)
 }
