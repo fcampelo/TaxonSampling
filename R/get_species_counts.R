@@ -15,15 +15,22 @@
 #' column, and the corresponding number of known species in the second column.
 #' @param verbose logical: regulates function echoing to console.
 #'
-#' @return `taxlist` list object updated to contain the additional field
-#' `$countSpp`, a numeric vector with the counts of known species for each
+#' @return `taxlist` list object updated to contain the additional fields:
+#' \itemize{
+#'    \item `spp_df`: two-column data frame with the input taxon IDs in the
+#'    first column, and the corresponding number of known species in the second
+#'    column. Filtered to have only the IDs present in `$countIDs`.
+#'    \item `$countSpp`, a numeric vector with the counts of (known) species for each
 #' taxon from `taxlist$countIDs`.
+#' }
+#'
 #'
 #' @export
 
 get_species_counts <- function(taxlist,
-                               spp_df = NULL, spp_file = NULL,
-                               verbose = TRUE) {
+                               spp_df   = NULL,
+                               spp_file = NULL,
+                               verbose  = TRUE) {
   # ===========================================================================
   # Sanity checks
   assertthat::assert_that(is.list(taxlist),
@@ -39,20 +46,22 @@ get_species_counts <- function(taxlist,
   if(!is.null(spp_file) && !file.exists(spp_file)){
     stop("File ", spp_file, " not found.")
   } else {
-    spp_df <- utils::read.table(spp_file, sep = "\t", header = TRUE)
+    spp_df <- as.data.frame(
+      data.table::fread(spp_file, sep = "\t",
+                        col.names = c("taxID", "species_count")))
   }
 
   # Assert data frame size
-  assertthat::assert_that(nrow(spp_df) > 0 && ncol(spp_df) == 2)
+  assertthat::assert_that(nrow(spp_df) > 0)
 
   # ===========================================================================
 
   if(verbose) message("Counting species")
 
   # Filter only the Spp counts for taxons listed in taxlist$countIDs
-  spp_df   <- spp_df[spp_df$id %in% names(taxlist$countIDs), ]
-  countSpp <- spp_df[, 2, drop = TRUE]
-  names(countSpp) <- spp_df[, 1]
+  spp_df   <- spp_df[spp_df$taxID %in% names(taxlist$countIDs), ]
+  countSpp <- spp_df$species_count
+  names(countSpp) <- spp_df$taxID
 
   # Species TaxIDs have zero child nodes, so we increment by 1
   countSpp[countSpp == 0] <- 1

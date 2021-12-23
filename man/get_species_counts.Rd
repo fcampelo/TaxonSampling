@@ -23,9 +23,14 @@ column, and the corresponding number of known species in the second column.}
 \item{verbose}{logical: regulates function echoing to console.}
 }
 \value{
-`taxlist` list object updated to contain the additional field
-`$countSpp`, a numeric vector with the counts of known species for each
+`taxlist` list object updated to contain the additional fields:
+\itemize{
+   \item `spp_df`: two-column data frame with the input taxon IDs in the
+   first column, and the corresponding number of known species in the second
+   column. Filtered to have only the IDs present in `$countIDs`.
+   \item `$countSpp`, a numeric vector with the counts of (known) species for each
 taxon from `taxlist$countIDs`.
+}
 }
 \description{
 This function processes a list of NCBI Taxon IDs and known number of species

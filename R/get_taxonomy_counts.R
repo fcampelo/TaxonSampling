@@ -26,13 +26,14 @@
 #'
 #' @return list object containing:
 #' \itemize{
-#'     \item `$nodes`: data.frame containing the pre-processed information about
-#'     the NCBI taxonomy structure, extracted from file _nodes.dmp_ of the
-#'     taxonomy files.
 #'     \item `$ids_df`: data.frame with taxon IDs in column 1 and corresponding
 #'     sequence IDs in column 2, as loaded from `ids_file` or passed directly as
 #'     input. Filtered to maintain only IDs that exist in `$nodes` and to remove
 #'     duplicated IDs.
+#'     \item `$nodes`: data.frame containing the pre-processed information about
+#'     the NCBI taxonomy structure, extracted from file _nodes.dmp_ of the
+#'     taxonomy files. Filtered to keep only nodes with IDs present in `$ids_df`
+#'     and with a non-zero total count.
 #'     \item `$countIDs`: numeric vector with the counts of the number of
 #'     taxonomy nodes (of all levels) under each taxon ID.
 #' }
@@ -63,7 +64,7 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
   # Load ids from file if required
   if(!is.null(ids_file)) {
     if(file.exists(ids_file)){
-      ids_df <- utils::read.table(ids_file, sep = "\t", header = FALSE,
+      ids_df <- data.table::fread(ids_file, sep = "\t",
                                   col.names = c("taxID", "seqID"))
     } else {
       stop("File ", ids_file, " not found.")
@@ -110,7 +111,7 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
     parentage <- table(searchIDs)
     countIDs[names(parentage)] <- countIDs[names(parentage)] + parentage
     searchIDs <- searchIDs[searchIDs != 1]
-    if(verbose) cat("\r-->", length(searchIDs), "taxIDs still being counted...")
+    if(verbose) cat("\r", sprintf("--> %06d taxIDs still being counted...", length(searchIDs)))
   }
   if(verbose) cat("\n")
 
@@ -122,8 +123,8 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
   nodes <- nodes[nodes$id %in% as.numeric(names(countIDs)), ]
 
   taxlist <- list(nodes    = nodes,
-                  countIDs = countIDs,
-                  ids_df   = ids_df)
+                  ids_df   = ids_df,
+                  countIDs = countIDs)
   class(taxlist) <- c(class(taxlist), "taxlist")
 
   return(taxlist)

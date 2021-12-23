@@ -40,13 +40,14 @@ function. If `nodes` is not `NULL` then `taxonomy_path` is ignored.}
 \value{
 list object containing:
 \itemize{
-    \item `$nodes`: data.frame containing the pre-processed information about
-    the NCBI taxonomy structure, extracted from file _nodes.dmp_ of the
-    taxonomy files.
     \item `$ids_df`: data.frame with taxon IDs in column 1 and corresponding
     sequence IDs in column 2, as loaded from `ids_file` or passed directly as
     input. Filtered to maintain only IDs that exist in `$nodes` and to remove
     duplicated IDs.
+    \item `$nodes`: data.frame containing the pre-processed information about
+    the NCBI taxonomy structure, extracted from file _nodes.dmp_ of the
+    taxonomy files. Filtered to keep only nodes with IDs present in `$ids_df`
+    and with a non-zero total count.
     \item `$countIDs`: numeric vector with the counts of the number of
     taxonomy nodes (of all levels) under each taxon ID.
 }
