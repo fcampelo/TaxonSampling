@@ -1,4 +1,6 @@
-process_requireIDs <- function(taxlist, ignoreIDs) {
+process_requireIDs <- function(taxlist) {
+  requireIDs <- taxlist$ts.params$requireIDs
+
   if (!is.null(requireIDs)) {
     # Filter IDs that aren't part of NCBI notation.
     idx <- which(!(requireIDs %in% taxlist$nodes$id))
@@ -16,6 +18,9 @@ process_requireIDs <- function(taxlist, ignoreIDs) {
     }
 
     # Remove IDs that have any ignoreIDs as a parent.
+    # (shouldn't happen, since we run process_ignoreIDs prior to calling
+    # this function - but just to be on the safe side)
+    # TODO: make this refer directly to taxlist$ts.params$ignoreIDs
     idx <- which(!(requireIDs %in% names(taxlist$countIDs)))
     if (length(idx) > 0) {
       warning("The following IDs are either children or part of your ignoreIDs and will be ignored:\n",
@@ -24,12 +29,16 @@ process_requireIDs <- function(taxlist, ignoreIDs) {
     }
 
     if (length(requireIDs) > 0) {
-      requireIDs <- get_taxonomy_counts(ids_df = as.data.frame(requireIDs),
-                                        nodes = taxlist$nodes)
+      requireIDs.list <- get_taxonomy_counts(ids_df  = data.frame(taxID = requireIDs,
+                                                                  seqID = NA),
+                                             nodes   = taxlist$nodes,
+                                             verbose = FALSE)
     } else {
-      requireIDs <- NULL
+      requireIDs.list <- NULL
     }
 
-    return(requireIDs)
+    taxlist$ts.params$requireIDs.list <- requireIDs.list
+
+    return(taxlist)
   }
 }

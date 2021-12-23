@@ -52,18 +52,24 @@ run_TS <- function(taxlist, taxon, m, method = "diversity",
                           length(sampling) == 1,
                           sampling %in% c("agnostic", "known_species"))
 
-  # Force IDs to integer vectors
+  # Force all IDs to integer
   if(is.character(taxon)) taxon <- as.integer(taxon)
   if(is.character(ignoreIDs)) ignoreIDs <- as.integer(ignoreIDs)
   if(is.character(requireIDs)) requireIDs <- as.integer(requireIDs)
   if(is.character(ignoreNonLeafIDs)) ignoreNonLeafIDs <- as.integer(ignoreNonLeafIDs)
 
+  # Add ID lists to taxlist
+  taxlist$ts.params$ignoreIDs        <- ignoreIDs
+  taxlist$ts.params$requireIDs       <- requireIDs
+  taxlist$ts.params$ignoreNonLeafIDs <- ignoreNonLeafIDs
+
   # ===========================================================================
 
   # Process ignoreIDs, ignoreNonLeafIDs and requireIDs
-  taxlist    <- process_ignoreIDs(taxlist, ignoreIDs)
-  taxlist    <- process_ignoreNonLeafIDs(taxlist, ignoreNonLeafIDs)
-  requireIDs <- process_requireIDs(taxlist, requireIDs)
+  # TODO: Check process_ignoreNonLeafIDs
+  taxlist <- process_ignoreIDs(taxlist)
+  taxlist <- process_ignoreNonLeafIDs(taxlist)
+  taxlist <- process_requireIDs(taxlist)
 
   # Reduce node information to the necessary only, reduces search time.
   taxlist$nodes <- taxlist$nodes[taxlist$nodes$id %in% as.numeric(names(taxlist$countIDs)), 1:2]

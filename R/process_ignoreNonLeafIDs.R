@@ -1,4 +1,6 @@
-process_ignoreNonLeafIDs <- function(taxlist, ignoreNonLeafIDs) {
+process_ignoreNonLeafIDs <- function(taxlist) {
+  ignoreNonLeafIDs <- taxlist$ts.params$ignoreNonLeafIDs
+
   if (!is.null(ignoreNonLeafIDs)) {
     # Filter IDs that aren't part of NCBI notation.
     idx <- which(!(ignoreNonLeafIDs %in% taxlist$nodes$id))
@@ -26,6 +28,8 @@ process_ignoreNonLeafIDs <- function(taxlist, ignoreNonLeafIDs) {
       }
     }
   }
+
+  taxlist$ts.params$ignoreNonLeafIDs <- ignoreNonLeafIDs
 
   return(taxlist)
 }

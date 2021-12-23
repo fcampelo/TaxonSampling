@@ -23,7 +23,7 @@ m <- 200
 
 #IDs to be ignored during sampling procedure (either terminal or internal taxa)
 ignoreIDs <- 8364
-ignoreNonLeafIDs <- NULL
+ignoreNonLeafIDs <- 7776
 
 #required IDs to be present in final output file (only terminal taxa - species)
 requireIDs <- c(2026169, 57393, 241292, 61967)

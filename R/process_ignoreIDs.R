@@ -1,4 +1,5 @@
-process_ignoreIDs <- function(taxlist, ignoreIDs) {
+process_ignoreIDs <- function(taxlist) {
+  ignoreIDs <- taxlist$ts.params$ignoreIDs
   if (!is.null(ignoreIDs)) {
     # Filter IDs that aren't part of NCBI notation.
     idx <- which(!(ignoreIDs %in% taxlist$nodes$id))
@@ -23,14 +24,14 @@ process_ignoreIDs <- function(taxlist, ignoreIDs) {
       }
     }
 
-    # Subtract the presence of the ignoreIDs from the countIDs.
+    # Subtract the ignoreIDs from the countIDs.
     for (id in ignoreIDs) {
       parentIDs <- as.character(CHNOSZ::allparents(id, nodes = taxlist$nodes))
       taxlist$countIDs[parentIDs] <- taxlist$countIDs[parentIDs] - taxlist$countIDs[as.character(id)]
     }
     taxlist$countIDs <- taxlist$countIDs[taxlist$countIDs > 0]
 
-    # Pruning the children of removed nodes.
+    # Prune out the children of removed nodes.
     orphans <- taxlist$nodes$id[!(taxlist$nodes$parent %in% names(taxlist$countIDs)) &
                                   (taxlist$nodes$id %in% names(taxlist$countIDs))]
     while (length(orphans) > 0) {
@@ -39,6 +40,8 @@ process_ignoreIDs <- function(taxlist, ignoreIDs) {
                             (taxlist$nodes$id %in% names(taxlist$countIDs))]
     }
   }
+
+  taxlist$ts.params$ignoreIDs <- ignoreIDs
 
   return(taxlist)
 }

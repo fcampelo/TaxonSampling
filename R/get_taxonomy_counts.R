@@ -69,6 +69,8 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
     } else {
       stop("File ", ids_file, " not found.")
     }
+  } else if(!is.null(ids_df)){
+    names(ids_df) <- c("taxID", "seqID")
   }
 
   # ===========================================================================
