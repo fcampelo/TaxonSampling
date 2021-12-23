@@ -41,10 +41,14 @@ function. If `nodes` is not `NULL` then `taxonomy_path` is ignored.}
 list object containing:
 \itemize{
     \item `$nodes`: data.frame containing the pre-processed information about
-    the NCBI taxonomy structure. This is extracted internally by calling
-    [CHNOSZ::getnodes()].
+    the NCBI taxonomy structure, extracted from file _nodes.dmp_ of the
+    taxonomy files.
+    \item `$ids_df`: data.frame with taxon IDs in column 1 and corresponding
+    sequence IDs in column 2, as loaded from `ids_file` or passed directly as
+    input. Filtered to maintain only IDs that exist in `$nodes` and to remove
+    duplicated IDs.
     \item `$countIDs`: numeric vector with the counts of the number of
-    taxonomy IDs belonging to each taxon.
+    taxonomy nodes (of all levels) under each taxon ID.
 }
 }
 \description{

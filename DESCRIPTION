@@ -17,6 +17,7 @@ License: GPL-2
 Depends: R (>= 4.1.0)
 Imports: 
     CHNOSZ (>= 1.4.1),
+    data.table (>= 1.0.0),
     assertthat (>= 0.2.1)
 Suggests: 
 Encoding: UTF-8

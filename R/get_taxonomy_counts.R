@@ -27,19 +27,23 @@
 #' @return list object containing:
 #' \itemize{
 #'     \item `$nodes`: data.frame containing the pre-processed information about
-#'     the NCBI taxonomy structure. This is extracted internally by calling
-#'     [CHNOSZ::getnodes()].
+#'     the NCBI taxonomy structure, extracted from file _nodes.dmp_ of the
+#'     taxonomy files.
+#'     \item `$ids_df`: data.frame with taxon IDs in column 1 and corresponding
+#'     sequence IDs in column 2, as loaded from `ids_file` or passed directly as
+#'     input. Filtered to maintain only IDs that exist in `$nodes` and to remove
+#'     duplicated IDs.
 #'     \item `$countIDs`: numeric vector with the counts of the number of
-#'     taxonomy IDs belonging to each taxon.
+#'     taxonomy nodes (of all levels) under each taxon ID.
 #' }
 #'
 #' @export
 
 get_taxonomy_counts <- function(taxonomy_path = NULL,
-                                ids_file = NULL,
-                                ids_df = NULL,
-                                nodes = NULL,
-                                verbose = TRUE) {
+                                ids_file      = NULL,
+                                ids_df        = NULL,
+                                nodes         = NULL,
+                                verbose       = TRUE) {
 
   # ===========================================================================
   # Sanity checks
@@ -59,7 +63,8 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
   # Load ids from file if required
   if(!is.null(ids_file)) {
     if(file.exists(ids_file)){
-      ids_df <- utils::read.table(ids_file, sep = "\t", header = FALSE)
+      ids_df <- utils::read.table(ids_file, sep = "\t", header = FALSE,
+                                  col.names = c("taxID", "seqID"))
     } else {
       stop("File ", ids_file, " not found.")
     }
@@ -69,23 +74,23 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
 
   # Extract all nodes from NCBI taxonomy
   if(is.null(nodes)){
-    if(verbose) message("Parsing NCBI Taxonomy data")
-    # capture.output to prevent undesired echoing of getnodes() to console
-    .ignore <- utils::capture.output({
-      nodes <- CHNOSZ::getnodes(taxonomy_path)
-    }, type = "message")
+    nodes <- as.data.frame(
+      data.table::fread("./data_files/taxdump/nodes.dmp",
+                        sep = "|", strip.white = TRUE,
+                        colClasses = c("numeric", "numeric", rep("NULL", 17)),
+                        col.names = c("id", "parent")))
   }
 
   # Filter IDs that aren't part of NCBI notation.
-  idx <- which(!(ids_df[, 1] %in% nodes$id))
+  idx <- which(!(ids_df$taxID %in% nodes$id))
   if (length(idx) > 0) {
     warning("The following IDs are not found in the NCBI taxonomy files and will be ignored:\n",
-            paste(ids_df[idx, 1], collapse = "\n"))
+            paste(ids_df$taxID[idx], collapse = "\n"))
     ids_df <- ids_df[-idx, ]
   }
 
   # Remove duplicates
-  idx <- which(duplicated(ids_df[, 1]))
+  idx <- which(duplicated(ids_df$taxID))
   if (length(idx) > 0) {
     warning("Some IDs are duplicated, only the first occurrence will be used.")
     ids_df <- ids_df[-idx, ]
@@ -96,16 +101,16 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
   names(countIDs)     <- nodes$id
   nodes_parent        <- nodes$parent
   names(nodes_parent) <- nodes$id
-  searchIDs           <- ids_df[, 1]
+  searchIDs           <- ids_df$taxID
   countIDs[as.character(searchIDs)] <- 1
 
   if(verbose) message("Counting taxonomy IDs")
   while (length(searchIDs) > 0) {
-    if(verbose) cat(".")
     searchIDs <- nodes_parent[as.character(searchIDs)]
     parentage <- table(searchIDs)
     countIDs[names(parentage)] <- countIDs[names(parentage)] + parentage
     searchIDs <- searchIDs[searchIDs != 1]
+    if(verbose) cat("\r-->", length(searchIDs), "taxIDs still being counted...")
   }
   if(verbose) cat("\n")
 
@@ -114,7 +119,7 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
   # Reduces the search size of nodes to the relevant input taxIDs and their
   # related ancestors/offsprings. Can greatly reduce search/running time for
   # the remaining functions.
-  nodes <- nodes[nodes$id %in% as.numeric(names(countIDs)), 1:2]
+  nodes <- nodes[nodes$id %in% as.numeric(names(countIDs)), ]
 
   taxlist <- list(nodes    = nodes,
                   countIDs = countIDs,
