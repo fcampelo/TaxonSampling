@@ -1,0 +1,10 @@
+sample_a_d_y <- function(m, m_i, childrenCount, childrenCountSpp, ...){
+
+  while (m > 0 & sum(childrenCount > m_i) > 0) {
+    child      <- sample(names(childrenCount)[childrenCount > m_i], 1)
+    m_i[child] <- m_i[child] + 1
+    m          <- m - 1
+  }
+
+  return(m_i)
+}

@@ -12,3 +12,4 @@ docs$
 ^LICENSE$
 ^\.github$
 ^inst/utils
+^data_files

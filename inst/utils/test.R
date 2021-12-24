@@ -31,7 +31,11 @@ requireIDs <- c(2026169, 57393, 241292, 61967)
 
 taxlist <- get_taxonomy_counts(taxonomy_path = taxonomy_path,
                                ids_file      = ids_file) %>%
-  get_species_counts(spp_file = spp_file)
+  get_species_counts(spp_file = spp_file) %>%
+  run_TS(taxon = taxon, m = m, randomize = randomize,
+         ignoreIDs = ignoreIDs, requireIDs = requireIDs,
+         ignoreNonLeafIDs = ignoreNonLeafIDs,
+         sampling = sampling)
 
 
 #path to multi-fasta file from where sequences should be sampled

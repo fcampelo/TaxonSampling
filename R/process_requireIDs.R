@@ -37,7 +37,7 @@ process_requireIDs <- function(taxlist) {
       requireIDs.list <- NULL
     }
 
-    taxlist$ts.params$requireIDs.list <- requireIDs.list
+    taxlist$ts.process$requireIDs.list <- requireIDs.list
 
     return(taxlist)
   }
