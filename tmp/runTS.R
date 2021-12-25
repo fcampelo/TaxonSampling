@@ -102,10 +102,6 @@ print("Simplifying taxonomic space")
 nodes <- Simplify_Nodes(nodes, countIDs)
 print("Done.")
 
-
-# ===== PAREI AQUI ===== #
-
-
 #list to store output IDs
 outputIDs1 <- list()
 

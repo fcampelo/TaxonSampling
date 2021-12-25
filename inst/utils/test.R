@@ -28,6 +28,8 @@ ignoreIDs        <- NULL
 ignoreNonLeafIDs <- NULL # only internal nodes - above species
 requireIDs       <- NULL # only terminal nodes - species
 
+verbose <- TRUE
+
 taxlist <- get_taxonomy_counts(taxonomy_path = taxonomy_path,
                                ids_file      = ids_file) %>%
   get_species_counts(spp_file = spp_file) %>%
@@ -39,7 +41,8 @@ taxlist <- get_taxonomy_counts(taxonomy_path = taxonomy_path,
          ignoreIDs        = ignoreIDs,
          requireIDs       = requireIDs,
          ignoreNonLeafIDs = ignoreNonLeafIDs,
-         sampling         = sampling)
+         sampling         = sampling,
+         verbose          = verbose)
 
 
 #path to multi-fasta file from where sequences should be sampled

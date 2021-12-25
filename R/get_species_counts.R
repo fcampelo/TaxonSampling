@@ -43,12 +43,14 @@ get_species_counts <- function(taxlist,
                           length(verbose) == 1)
 
   # Load ids from file if required
-  if(!is.null(spp_file) && !file.exists(spp_file)){
-    stop("File ", spp_file, " not found.")
-  } else {
-    spp_df <- as.data.frame(
-      data.table::fread(spp_file, sep = "\t",
-                        col.names = c("taxID", "species_count")))
+  if(!is.null(spp_file)){
+    if(!file.exists(spp_file)){
+      stop("File ", spp_file, " not found.")
+    } else {
+      spp_df <- as.data.frame(
+        data.table::fread(spp_file, sep = "\t",
+                          col.names = c("taxID", "species_count")))
+    }
   }
 
   # Assert data frame size

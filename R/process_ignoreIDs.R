@@ -39,9 +39,9 @@ process_ignoreIDs <- function(taxlist) {
       orphans <- taxlist$nodes$id[!(taxlist$nodes$parent %in% names(taxlist$countIDs)) &
                             (taxlist$nodes$id %in% names(taxlist$countIDs))]
     }
-  }
 
-  taxlist$ts.params$ignoreIDs <- ignoreIDs
+    taxlist$ts.params$ignoreIDs <- ignoreIDs
+  }
 
   return(taxlist)
 }

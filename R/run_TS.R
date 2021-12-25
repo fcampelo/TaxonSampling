@@ -98,10 +98,9 @@ run_TS <- function(taxlist, taxon, m,
 
   # Call the TS algorithm itself.
   if(verbose) message("Running recursive sampling")
-  taxlist$ts.process <- list(recursion.counter = 0,taxon = taxon, m = m)
+  taxlist$ts.process <- list(taxon = taxon, m = m)
   taxlist$outputIDs  <- ts_recursive(taxlist, verbose)
-
-  if(verbose) cat("\n Done!")
+  if(verbose) cat("\r                                             \rDone!")
 
   return(taxlist)
 }

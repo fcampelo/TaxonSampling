@@ -27,9 +27,8 @@ process_ignoreNonLeafIDs <- function(taxlist) {
         taxlist$countIDs[as.character(id)] <- childSum
       }
     }
+    taxlist$ts.params$ignoreNonLeafIDs <- ignoreNonLeafIDs
   }
-
-  taxlist$ts.params$ignoreNonLeafIDs <- ignoreNonLeafIDs
 
   return(taxlist)
 }

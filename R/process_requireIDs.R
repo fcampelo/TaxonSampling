@@ -41,7 +41,8 @@ process_requireIDs <- function(taxlist) {
     } else {
       taxlist$ts.process$requireIDs.list <- NULL
     }
-
-    return(taxlist)
+    taxlist$ts.params$requireIDs <- requireIDs
   }
+
+  return(taxlist)
 }

@@ -32,11 +32,10 @@
 
 ts_recursive <- function(taxlist, verbose = TRUE) {
 
-  taxlist$ts.process$recursion.counter <- taxlist$ts.process$recursion.counter + 1
+  mychar <- sample(c("p", "d", "q", "b"), size = 1)
+  if(verbose) cat("\r--> Recursive sampling:", mychar)
 
-  if(verbose) cat("\r--> Recursion counter:", taxlist$ts.process$recursion.counter)
-
-  # extract relevant variables
+  # extract relevant variables for recursive call
   taxon <- taxlist$ts.process$taxon
   m     <- taxlist$ts.process$m
 
