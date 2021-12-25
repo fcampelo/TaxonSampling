@@ -8,6 +8,8 @@ run_TS(
   taxlist,
   taxon,
   m,
+  seq_file,
+  out_file = NULL,
   method = "diversity",
   randomize = "no",
   replacement = FALSE,
@@ -25,6 +27,12 @@ run_TS(
 character or integer value)}
 
 \item{m}{desired sample size}
+
+\item{seq_file}{character string with the path to the multifasta file
+containing the input sequences.}
+
+\item{out_file}{character string naming a file to save the output (a
+multifasta file).}
 
 \item{method}{sampling method to use. Accepts "balance" (favors balanced taxa
 representation) or "diversity" (favors maximized taxa representation)}
