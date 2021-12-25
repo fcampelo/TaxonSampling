@@ -7,6 +7,10 @@
 #' @param taxon Taxon ID from which to start sampling children taxa (single
 #' character or integer value)
 #' @param m desired sample size
+#' @param seq_file character string with the path to the multifasta file
+#' containing the input sequences.
+#' @param out_file character string naming a file to save the output (a
+#' multifasta file).
 #' @param method sampling method to use. Accepts "balance" (favors balanced taxa
 #' representation) or "diversity" (favors maximized taxa representation)
 #' @param randomize randomization strategy: should the algorithm choose IDs
@@ -34,7 +38,8 @@
 #'
 #' @export
 
-run_TS <- function(taxlist, taxon, m,
+run_TS <- function(taxlist, taxon, m, seq_file,
+                   out_file         = NULL,
                    method           = "diversity",
                    randomize        = "no",
                    replacement      = FALSE,
@@ -50,6 +55,10 @@ run_TS <- function(taxlist, taxon, m,
                           all(c("countIDs", "nodes") %in% names(taxlist)),
                           is.character(taxon) || is.numeric(taxon),
                           assertthat::is.count(m),
+                          is.character(seq_file), length(seq_file) == 1,
+                          file.exists(seq_file),
+                          is.null(out_file) ||
+                            (is.character(seq_file) && length(seq_file) == 1),
                           is.character(randomize), length(randomize) == 1,
                           is.character(sampling), length(sampling) == 1,
                           is.character(method), length(method) == 1,
@@ -101,6 +110,18 @@ run_TS <- function(taxlist, taxon, m,
   taxlist$ts.process <- list(taxon = taxon, m = m)
   taxlist$outputIDs  <- ts_recursive(taxlist, verbose)
   if(verbose) cat("\r                                             \rDone!")
+
+  taxlist <- extract_sequences(taxlist, seq_file, verbose)
+
+  if(!is.null(out_file)){
+    if(!dir.exists(dirname(out_file))) {
+      dir.create(dirname(out_file), recursive = TRUE)
+    }
+    if(verbose) message("Saving sampled sequences to file: ", out_file)
+    seqinr::write.fasta(sequences = taxlist$outputSeqs,
+                        names     = names(taxlist$outputSeqs),
+                        file.out  = out_file)
+  }
 
   return(taxlist)
 }

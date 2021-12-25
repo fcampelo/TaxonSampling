@@ -64,8 +64,9 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
   # Load ids from file if required
   if(!is.null(ids_file)) {
     if(file.exists(ids_file)){
-      ids_df <- data.table::fread(ids_file, sep = "\t",
-                                  col.names = c("taxID", "seqID"))
+      ids_df <- as.data.frame(
+        data.table::fread(ids_file, sep = "\t",
+                          col.names = c("taxID", "seqID")))
     } else {
       stop("File ", ids_file, " not found.")
     }

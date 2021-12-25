@@ -4,6 +4,8 @@ library(dplyr)
 ids_file      <- "data_files/metadata/TaxID2SeqID.txt"      # tabular file linking NCBI taxon IDs to sequence IDs
 taxonomy_path <- "data_files/taxdump/"                      # NCBI taxonomy files
 spp_file      <- "data_files/metadata/TaxID2sppCounts.tsv"  # file linking NCBI taxon IDs to sequence IDs
+seq_file      <- "data_files/fasta/mit_vertebrata.fasta"    # multi-fasta file from where sequences should be sampled
+out_file      <- "results/output_TS.fasta"                  # output file for saving results
 
 # root taxon
 taxon <- 40674 # mammalia
@@ -28,8 +30,6 @@ ignoreIDs        <- NULL
 ignoreNonLeafIDs <- NULL # only internal nodes - above species
 requireIDs       <- NULL # only terminal nodes - species
 
-verbose <- TRUE
-
 taxlist <- get_taxonomy_counts(taxonomy_path = taxonomy_path,
                                ids_file      = ids_file) %>%
   get_species_counts(spp_file = spp_file) %>%
@@ -41,21 +41,7 @@ taxlist <- get_taxonomy_counts(taxonomy_path = taxonomy_path,
          ignoreIDs        = ignoreIDs,
          requireIDs       = requireIDs,
          ignoreNonLeafIDs = ignoreNonLeafIDs,
-         sampling         = sampling,
-         verbose          = verbose)
-
-
-#path to multi-fasta file from where sequences should be sampled
-multifasta <- "data_files/fasta/mit_vertebrata.fasta"
-
-
-
-#output directory
-outDir <- "results/"
-
-#path to output file
-outFile <- paste0(outDir, "/output_TS.fasta")
-
+         sampling         = sampling)
 
 
 #from here on, users do not need to edit this file

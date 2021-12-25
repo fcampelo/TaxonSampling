@@ -5,7 +5,7 @@ docs$
 ^doc$
 ^Meta$
 ^CRAN-RELEASE$
-^results$
+^results/$
 ^data$
 ^tmp$
 ^tests$
