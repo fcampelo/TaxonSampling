@@ -123,5 +123,7 @@ run_TS <- function(taxlist, taxon, m, seq_file,
                         file.out  = out_file)
   }
 
+  if(verbose) message("Done!")
+
   return(taxlist)
 }
