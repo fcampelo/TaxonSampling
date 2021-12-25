@@ -1,41 +1,45 @@
 library(dplyr)
 
-#path to tabular file linking NCBI taxon IDs to sequence IDs
-ids_file <- "data_files/metadata/TaxID2SeqID.txt"
+# file paths
+ids_file      <- "data_files/metadata/TaxID2SeqID.txt"      # tabular file linking NCBI taxon IDs to sequence IDs
+taxonomy_path <- "data_files/taxdump/"                      # NCBI taxonomy files
+spp_file      <- "data_files/metadata/TaxID2sppCounts.tsv"  # file linking NCBI taxon IDs to sequence IDs
 
-# path to NCBI taxonomy files (execute "install.sh" to automatically download them)
-taxonomy_path <- "data_files/taxdump/"
+# root taxon
+taxon <- 40674 # mammalia
 
-#path to file linking NCBI taxon IDs to sequence IDs
-spp_file <- "data_files/metadata/TaxID2sppCounts.tsv"
-
-#mammalia
-taxon <- 40674
-
-#whether/how to randomize (options are "yes", "no" and "after_first_round")
+# whether/how to randomize (options are "yes", "no" and "after_first_round")
 randomize <- "after_first_round"
 
-#sampling procedure (either "agnostic" or "known_species")
+# sampling procedure (either "agnostic" or "known_species")
 sampling <- "agnostic"
 
-#number of sequences to sample
+# sampling priority ("diversity" or "balanced")
+method <- "diversity"
+
+# replacement mode
+replacement <- FALSE
+
+# number of sequences to sample
 m <- 200
 
-#IDs to be ignored during sampling procedure (either terminal or internal taxa)
-ignoreIDs <- 8364
-ignoreNonLeafIDs <- 7776
-
-#required IDs to be present in final output file (only terminal taxa - species)
-requireIDs <- c(2026169, 57393, 241292, 61967)
-
+# IDs to be ignored/required during sampling procedure
+ignoreIDs        <- NULL
+ignoreNonLeafIDs <- NULL # only internal nodes - above species
+requireIDs       <- NULL # only terminal nodes - species
 
 taxlist <- get_taxonomy_counts(taxonomy_path = taxonomy_path,
                                ids_file      = ids_file) %>%
   get_species_counts(spp_file = spp_file) %>%
-  run_TS(taxon = taxon, m = m, randomize = randomize,
-         ignoreIDs = ignoreIDs, requireIDs = requireIDs,
+  run_TS(taxon            = taxon,
+         m                = m,
+         method           = method,
+         randomize        = randomize,
+         replacement      = replacement,
+         ignoreIDs        = ignoreIDs,
+         requireIDs       = requireIDs,
          ignoreNonLeafIDs = ignoreNonLeafIDs,
-         sampling = sampling)
+         sampling         = sampling)
 
 
 #path to multi-fasta file from where sequences should be sampled

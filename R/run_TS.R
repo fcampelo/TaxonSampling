@@ -27,16 +27,22 @@
 #' @param sampling sampling mode. Accepts "agnostic" (sample species in a
 #' diversity-agnostic manner) or "known_species" (sample based on known species
 #' diversity).
+#' @param verbose logical: regulates function echoing to console.
 #'
 #' @return
 #' Updated `taxlist` containing vector `$outputIDs` of sampled IDs.
 #'
 #' @export
 
-run_TS <- function(taxlist, taxon, m, method = "diversity",
-                   randomize = "no", replacement = FALSE,
-                   ignoreIDs = NULL, requireIDs = NULL,
-                   ignoreNonLeafIDs = NULL, sampling = "agnostic") {
+run_TS <- function(taxlist, taxon, m,
+                   method           = "diversity",
+                   randomize        = "no",
+                   replacement      = FALSE,
+                   ignoreIDs        = NULL,
+                   requireIDs       = NULL,
+                   ignoreNonLeafIDs = NULL,
+                   sampling         = "agnostic",
+                   verbose          = TRUE) {
 
   # ===========================================================================
   # Sanity checks
@@ -59,7 +65,8 @@ run_TS <- function(taxlist, taxon, m, method = "diversity",
                             is.character(requireIDs),
                           is.null(ignoreNonLeafIDs) ||
                             is.numeric(ignoreNonLeafIDs) ||
-                            is.character(ignoreNonLeafIDs))
+                            is.character(ignoreNonLeafIDs),
+                          is.logical(verbose), length(verbose) == 1)
 
   if (randomize == "after_first_round" && method == "balance"){
     stop('Combination of randomize == "after_first_round" and method == "balance" not possible')
@@ -88,10 +95,13 @@ run_TS <- function(taxlist, taxon, m, method = "diversity",
 
   # Ensure m <= number of valid ids.
   m <- min(m, length(intersect(taxlist$ids_df$taxID, names(taxlist$countIDs))))
-  taxlist$ts.process$m <- m
 
   # Call the TS algorithm itself.
-  taxlist <- ts_recursive(taxlist)
+  if(verbose) message("Running recursive sampling")
+  taxlist$ts.process <- list(recursion.counter = 0,taxon = taxon, m = m)
+  taxlist$outputIDs  <- ts_recursive(taxlist, verbose)
+
+  if(verbose) cat("\n Done!")
 
   return(taxlist)
 }

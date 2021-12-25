@@ -30,10 +30,14 @@
 #   outputIDs:                (vector) vector of IDs with maximized taxonomy
 #                             balance or diversity.
 
-ts_recursive <- function(taxlist) {
+ts_recursive <- function(taxlist, verbose = TRUE) {
+
+  taxlist$ts.process$recursion.counter <- taxlist$ts.process$recursion.counter + 1
+
+  if(verbose) cat("\r--> Recursion counter:", taxlist$ts.process$recursion.counter)
 
   # extract relevant variables
-  taxon <- taxlist$ts.params$taxon
+  taxon <- taxlist$ts.process$taxon
   m     <- taxlist$ts.process$m
 
   # Sanity check
@@ -46,9 +50,11 @@ ts_recursive <- function(taxlist) {
 
   # Condition to end recursion
   if (length(children) == 0) {
-    return(ifelse(taxlist$ts.params$replacement),
-           yes  = rep(taxon, m),
-           no =   taxon)
+    if(taxlist$ts.params$replacement){
+      return(rep(taxon, m))
+    } else {
+      return(taxon)
+    }
   }
 
   childrenCount    <- taxlist$countIDs[as.character(children)]
@@ -66,7 +72,7 @@ ts_recursive <- function(taxlist) {
 
 
   # For cases when one taxon isn't a leaf node, but is an input ID that should
-  # be available to sample along its children.
+  # be available to be sampled along with its children.
   # Example of this case is an input with Homo sapiens (9606),
   # H. sapiens neanderthalensis (63221) and H. sapiens ssp. denisova (741158).
   if (sum(childrenCount) < taxlist$countIDs[as.character(taxon)]) {
@@ -76,14 +82,14 @@ ts_recursive <- function(taxlist) {
     childrenCount[as.character(taxon)]    <- 1
   }
 
-  # Allocate m_i to the children taxa:
-
+  # Allocation function to use:
   fname <- paste("sample",
                  substr(taxlist$ts.params$sampling, 1, 1),
                  substr(taxlist$ts.params$method, 1, 1),
                  substr(taxlist$ts.params$randomize, 1, 1),
                  sep = "_")
 
+  # Perform sampling at current recursion level
   m_i <- do.call(fname,
                  args = list(m                = m,
                              m_i              = 0 * childrenCount,
@@ -124,12 +130,12 @@ ts_recursive <- function(taxlist) {
       if (id == as.character(taxon)){
         outputIDs <- c(outputIDs, id)
       } else {
-        taxlist$ts.process$m <- m_i[id]
+        taxlist$ts.process$m     <- m_i[id]
+        taxlist$ts.process$taxon <- id
         outputIDs <- c(outputIDs, ts_recursive(taxlist))
       }
     }
   }
-  taxlist$outputIDs <- outputIDs
 
-  return(taxlist)
+  return(outputIDs)
 }

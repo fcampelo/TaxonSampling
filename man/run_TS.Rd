@@ -14,7 +14,8 @@ run_TS(
   ignoreIDs = NULL,
   requireIDs = NULL,
   ignoreNonLeafIDs = NULL,
-  sampling = "agnostic"
+  sampling = "agnostic",
+  verbose = TRUE
 )
 }
 \arguments{
@@ -51,6 +52,8 @@ and won't exclude children from the sampling (unlike ignoreIDs).}
 \item{sampling}{sampling mode. Accepts "agnostic" (sample species in a
 diversity-agnostic manner) or "known_species" (sample based on known species
 diversity).}
+
+\item{verbose}{logical: regulates function echoing to console.}
 }
 \value{
 Updated `taxlist` containing vector `$outputIDs` of sampled IDs.
