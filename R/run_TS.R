@@ -108,8 +108,9 @@ run_TS <- function(taxlist, taxon, m, seq_file,
   # Call the TS algorithm itself.
   if(verbose) message("Running recursive sampling")
   taxlist$ts.process <- list(taxon = taxon, m = m)
-  taxlist$outputIDs  <- ts_recursive(taxlist, verbose)
-  if(verbose) cat("\r                                             \rDone!")
+  taxlist$outputIDs  <- c(taxlist$ts.process$outputIDs,
+                          ts_recursive(taxlist, verbose))
+  if(verbose) cat("\r", rep(" ", 50), "\r")
 
   taxlist <- extract_sequences(taxlist, seq_file, verbose)
 
@@ -123,7 +124,11 @@ run_TS <- function(taxlist, taxon, m, seq_file,
                         file.out  = out_file)
   }
 
-  if(verbose) message("Done!")
+  # Remove temporary elements used in processing
+  taxlist$ts.process <- NULL
 
+  class(taxlist) <- unique(c(class(taxlist), "taxonsampling"))
+
+  if(verbose) message("Done!")
   return(taxlist)
 }

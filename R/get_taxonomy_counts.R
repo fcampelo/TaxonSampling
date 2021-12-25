@@ -116,7 +116,7 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
     searchIDs <- searchIDs[searchIDs != 1]
     if(verbose) cat("\r", sprintf("--> %06d taxIDs still being counted...", length(searchIDs)))
   }
-  if(verbose) cat("\n")
+  if(verbose) cat("\r", rep(" ", 50), "\r")
 
   countIDs <- countIDs[countIDs > 0]
 
@@ -128,7 +128,7 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
   taxlist <- list(nodes    = nodes,
                   ids_df   = ids_df,
                   countIDs = countIDs)
-  class(taxlist) <- c(class(taxlist), "taxlist")
+  class(taxlist) <- c(class(taxlist), "taxonsampling")
 
   return(taxlist)
 }

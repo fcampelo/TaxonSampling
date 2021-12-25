@@ -1,6 +1,9 @@
 process_requireIDs <- function(taxlist) {
-  requireIDs <- taxlist$ts.params$requireIDs
 
+  taxlist$ts.process$requireIDs.list <- NULL
+  taxlist$ts.process$outputIDs       <- character()
+
+  requireIDs <- taxlist$ts.params$requireIDs
   if (!is.null(requireIDs)) {
     # Filter IDs that aren't part of NCBI notation.
     idx <- which(!(requireIDs %in% taxlist$nodes$id))
@@ -38,8 +41,6 @@ process_requireIDs <- function(taxlist) {
       taxlist$ts.process$outputIDs <- requireIDs
       taxlist$ts.process$m <- taxlist$ts.process$m - length(requireIDs)
 
-    } else {
-      taxlist$ts.process$requireIDs.list <- NULL
     }
     taxlist$ts.params$requireIDs <- requireIDs
   }

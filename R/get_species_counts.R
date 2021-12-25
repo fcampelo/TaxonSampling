@@ -71,6 +71,9 @@ get_species_counts <- function(taxlist,
   # Update taxlist and return
   taxlist$spp_df   <- spp_df
   taxlist$countSpp <- countSpp
+
+  class(taxlist) <- unique(c(class(taxlist), "taxonsampling"))
+
   return(taxlist)
 
 }
