@@ -24,7 +24,7 @@
 #' [CHNOSZ::getnodes()], or as a result of a previous call to this
 #' function. If `nodes` is not `NULL` then `taxonomy_path` is ignored.
 #'
-#' @return list object containing:
+#' @return list object of class _taxonsampling_, containing:
 #' \itemize{
 #'     \item `$ids_df`: data.frame with taxon IDs in column 1 and corresponding
 #'     sequence IDs in column 2, as loaded from `ids_file` or passed directly as

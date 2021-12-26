@@ -3,14 +3,15 @@
 #' Run the TaxonSampling method to return a sample of taxonomic IDs according
 #' to the desired balance / diversity.
 #'
-#' @param taxlist list object returned by [get_species_count()]
+#' @param taxlist list object of class _taxonsampling_, returned by
+#' [get_species_count()]
 #' @param taxon Taxon ID from which to start sampling children taxa (single
 #' character or integer value)
 #' @param m desired sample size
 #' @param seq_file character string with the path to the multifasta file
 #' containing the input sequences.
 #' @param out_file character string naming a file to save the output (a
-#' multifasta file).
+#' multifasta file). Ignored if `seq_file == NULL`.
 #' @param method sampling method to use. Accepts "balance" (favors balanced taxa
 #' representation) or "diversity" (favors maximized taxa representation)
 #' @param randomize randomization strategy: should the algorithm choose IDs
@@ -33,12 +34,14 @@
 #' diversity).
 #' @param verbose logical: regulates function echoing to console.
 #'
-#' @return
-#' Updated `taxlist` containing vector `$outputIDs` of sampled IDs.
+#' @return Input object`taxlist` updated with vector `$outputIDs` of
+#' sampled IDs and list `$outputSeqs` (if seq_file is not `NULL`) containing
+#' information about the sequences sampled.
 #'
 #' @export
 
-run_TS <- function(taxlist, taxon, m, seq_file,
+run_TS <- function(taxlist, taxon, m,
+                   seq_file         = NULL,
                    out_file         = NULL,
                    method           = "diversity",
                    randomize        = "no",
@@ -55,10 +58,12 @@ run_TS <- function(taxlist, taxon, m, seq_file,
                           all(c("countIDs", "nodes") %in% names(taxlist)),
                           is.character(taxon) || is.numeric(taxon),
                           assertthat::is.count(m),
-                          is.character(seq_file), length(seq_file) == 1,
-                          file.exists(seq_file),
+                          is.null(seq_file) ||
+                            (is.character(seq_file) &&
+                               length(seq_file) == 1 &&
+                               file.exists(seq_file)),
                           is.null(out_file) ||
-                            (is.character(seq_file) && length(seq_file) == 1),
+                            (is.character(out_file) && length(out_file) == 1),
                           is.character(randomize), length(randomize) == 1,
                           is.character(sampling), length(sampling) == 1,
                           is.character(method), length(method) == 1,
@@ -112,16 +117,18 @@ run_TS <- function(taxlist, taxon, m, seq_file,
                           ts_recursive(taxlist, verbose))
   if(verbose) cat("\r", rep(" ", 50), "\r")
 
-  taxlist <- extract_sequences(taxlist, seq_file, verbose)
+  if(!is.null(seq_file)){
+    taxlist <- extract_sequences(taxlist, seq_file, verbose)
 
-  if(!is.null(out_file)){
-    if(!dir.exists(dirname(out_file))) {
-      dir.create(dirname(out_file), recursive = TRUE)
+    if(!is.null(out_file)){
+      if(!dir.exists(dirname(out_file))) {
+        dir.create(dirname(out_file), recursive = TRUE)
+      }
+      if(verbose) message("Saving sampled sequences to file: ", out_file)
+      seqinr::write.fasta(sequences = taxlist$outputSeqs,
+                          names     = names(taxlist$outputSeqs),
+                          file.out  = out_file)
     }
-    if(verbose) message("Saving sampled sequences to file: ", out_file)
-    seqinr::write.fasta(sequences = taxlist$outputSeqs,
-                        names     = names(taxlist$outputSeqs),
-                        file.out  = out_file)
   }
 
   # Remove temporary elements used in processing

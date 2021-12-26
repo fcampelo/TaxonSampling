@@ -8,7 +8,7 @@ run_TS(
   taxlist,
   taxon,
   m,
-  seq_file,
+  seq_file = NULL,
   out_file = NULL,
   method = "diversity",
   randomize = "no",
@@ -21,7 +21,8 @@ run_TS(
 )
 }
 \arguments{
-\item{taxlist}{list object returned by [get_species_count()]}
+\item{taxlist}{list object of class _taxonsampling_, returned by
+[get_species_count()]}
 
 \item{taxon}{Taxon ID from which to start sampling children taxa (single
 character or integer value)}
@@ -32,7 +33,7 @@ character or integer value)}
 containing the input sequences.}
 
 \item{out_file}{character string naming a file to save the output (a
-multifasta file).}
+multifasta file). Ignored if `seq_file == NULL`.}
 
 \item{method}{sampling method to use. Accepts "balance" (favors balanced taxa
 representation) or "diversity" (favors maximized taxa representation)}
@@ -64,7 +65,9 @@ diversity).}
 \item{verbose}{logical: regulates function echoing to console.}
 }
 \value{
-Updated `taxlist` containing vector `$outputIDs` of sampled IDs.
+Input object`taxlist` updated with vector `$outputIDs` of
+sampled IDs and list `$outputSeqs` (if seq_file is not `NULL`) containing
+information about the sequences sampled.
 }
 \description{
 Run the TaxonSampling method to return a sample of taxonomic IDs according

@@ -38,7 +38,7 @@ function. If `nodes` is not `NULL` then `taxonomy_path` is ignored.}
 \item{verbose}{logical: regulates function echoing to console.}
 }
 \value{
-list object containing:
+list object of class _taxonsampling_, containing:
 \itemize{
     \item `$ids_df`: data.frame with taxon IDs in column 1 and corresponding
     sequence IDs in column 2, as loaded from `ids_file` or passed directly as

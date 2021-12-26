@@ -3,7 +3,7 @@
 #' This function processes a list of NCBI Taxon IDs and known number of species
 #' and determines the count of species under each taxon
 #'
-#' @param taxlist a list object of class _taxlist_, containing (at least) a
+#' @param taxlist a list object of class _taxonsampling_, containing (at least) a
 #' field `$countIDs`, a numeric vector with the counts of the number of
 #' taxonomy IDs belonging to each taxon (calculated as part of
 #' [get_taxonomy_counts()]).
@@ -15,7 +15,7 @@
 #' column, and the corresponding number of known species in the second column.
 #' @param verbose logical: regulates function echoing to console.
 #'
-#' @return `taxlist` list object updated to contain the additional fields:
+#' @return Input object `taxlist` updated to contain the additional fields:
 #' \itemize{
 #'    \item `spp_df`: two-column data frame with the input taxon IDs in the
 #'    first column, and the corresponding number of known species in the second

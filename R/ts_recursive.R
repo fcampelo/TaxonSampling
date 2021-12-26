@@ -135,7 +135,7 @@ ts_recursive <- function(taxlist, verbose = TRUE) {
       } else {
         taxlist$ts.process$m     <- m_i[id]
         taxlist$ts.process$taxon <- id
-        outputIDs <- c(outputIDs, ts_recursive(taxlist))
+        outputIDs <- c(outputIDs, ts_recursive(taxlist, verbose))
       }
     }
   }

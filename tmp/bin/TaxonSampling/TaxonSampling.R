@@ -16,7 +16,7 @@ RemoveDups <- function(df, column) {
   #   column: (integer) number indicating which column to use when removing
   #                     duplicates
 
-  inds = sample(1:nrow(df))  
+  inds = sample(1:nrow(df))
   df = df[inds, ]
   dups = duplicated(df[, column])
   df = df[!dups, ]
@@ -30,8 +30,8 @@ WriteFasta <- function(idsFile, multifasta, outputIDs, outFile = "output") {
   # Writes the sequence of the outputIDs in a multifasta file.
   #
   # Args:
-  #   idsFile: (char) path to the input file with the input taxon IDs in 
-  #                   the first column, and the corresponding sequence ID 
+  #   idsFile: (char) path to the input file with the input taxon IDs in
+  #                   the first column, and the corresponding sequence ID
   #                   in the multifasta input file (without the ">").
   #   multifasta: (char) path to the multifasta file with the input sequences.
   #   outputIDs: (vector) vector of IDs with maximized taxonomy balance
@@ -74,7 +74,7 @@ TS_TaxonomyData <- function(idsFile, nodes) {
   # Returns:
   #   countIDs: (vector) count of how many taxnomoy IDs belong to each taxon,
   #                      created by TS_TaxonomyData().
-  
+
   # Get ids to search
 #  ids <- idsFile
   if (!is.null(idsFile) & isTRUE(file.exists(as.character(idsFile)))) {
@@ -84,7 +84,7 @@ TS_TaxonomyData <- function(idsFile, nodes) {
     ids <- as.integer(idsFile)  # assume it's a test.name or back.name, for now
   }
 
-  
+
   # Sanity check: filter IDs that aren't part of NCBI notation.
   if (!all(is.element(ids, nodes$id))) {
     cat("Warning: the following inputs are not part of NCBI taxonomy IDs",
@@ -92,14 +92,14 @@ TS_TaxonomyData <- function(idsFile, nodes) {
         ids[!is.element(ids, nodes$id)], "\n")
     ids <- ids[is.element(ids, nodes$id)]
   }
-  
+
   # Sanity check: unique ID inputs, remove duplicates.
   if (any(duplicated(ids))) {
     cat("Warning: some ids are repeated, using only one instance of each.\n",
         ids[duplicated(ids)], "\n")
     ids <- unique(ids)
   }
-  
+
   # Counting how often each taxonomy ID occurs in the dataset
   countIDs <- rep.int(0, nrow(nodes))
   names(countIDs) <- nodes$id
@@ -113,7 +113,7 @@ TS_TaxonomyData <- function(idsFile, nodes) {
     countIDs[names(parentage)] <- countIDs[names(parentage)] + parentage
     searchIDs <- searchIDs[searchIDs != 1]
   }
-  
+
   countIDs <- countIDs[countIDs > 0]
   return(countIDs)
 }
@@ -127,7 +127,7 @@ TS_SpeciesData  <- function(knownSppFile, countIDs) {
   #   idsFile: (char) path to a file with the input taxon IDs in the first
   #                   column, and the corresponding known number of species
   #                   in the second.
-  #   countIDs: (char) 
+  #   countIDs: (char)
   # Returns:
   #   countSpp: (vector) count of how many known species to each taxon.
 
@@ -140,7 +140,7 @@ TS_SpeciesData  <- function(knownSppFile, countIDs) {
     msg <- paste("The file containing known species was not found at", " ", knownSppFile)
   stop(msg)
   }
-  
+
   # Sanity check: filter IDs that aren't part of NCBI notation.
 #  if (!all(is.element(ids, nodes$id))) {
 #    cat("Warning: the following inputs are not part of NCBI taxonomy IDs",
@@ -153,7 +153,7 @@ TS_SpeciesData  <- function(knownSppFile, countIDs) {
   tmp_df_2 <- tmp_df[tmp_df$id %in% ids,]
   countSpp <- tmp_df_2[,2]
   names(countSpp) <- tmp_df_2[,1]
-  
+
   # Species TaxIDs have zero child species, so we need to replace them by 1's
   countSpp[countSpp == 0] <- 1
   return(countSpp)
@@ -164,7 +164,7 @@ Simplify_Nodes <- function(nodes, countIDs) {
   # Reduces the search size of nodes to the relevant input taxIDs and their
   # related ancestors/offsprings. Can greatly reduce search/running time for
   # the remaining functions.
-  # 
+  #
   # Args:
   #   nodes: (data.frame) pre-processed information about the NCBI taxonomy
   #                       structure. Created by getnodes() from the CHNOSZ
@@ -187,7 +187,7 @@ TS_Algorithm_Recursion <- function(taxon, m, nodes, countIDs,
                                    requireIDs = NULL, ignoreNonLeafID,
                                    sampling = "agnostic") {
   # An algorithm that receives a group of Taxonomy IDs and the size m of the
-  # sample to obtain from them. Returns a vector with a maximized taxonomy 
+  # sample to obtain from them. Returns a vector with a maximized taxonomy
   # diversity. Assumes that every input id is unique.
   # If replacement = "yes", then it may return repeated IDs if it increases
   # the taxonomy diversity when method = "diversity".
@@ -203,29 +203,29 @@ TS_Algorithm_Recursion <- function(taxon, m, nodes, countIDs,
   #   replacement: (char) whether the algorithm allows to repeat IDs in order
   #                       to maximize taxonomy diversity and to reach m IDs
   #                       in the output.
-  #   randomize: (char) whether the algorithm will choose IDs randomly or 
+  #   randomize: (char) whether the algorithm will choose IDs randomly or
   #                  maintaining a balanced allocation (m_i differing by no
   #                  more than 1 if the maximum possible value wasn't reached).
-  #   method: (char) whether it favors balanced taxa representation 
+  #   method: (char) whether it favors balanced taxa representation
   #                  (method = "balance") or maximized taxa representation
   #                  (method = "diversity").
   #   requireIDs: (char) IDs that must appear in the output.
   # Returns:
   #   outputIDs: (vector) vector of IDs with maximized taxonomy balance
-  #                       or diversity.  
+  #                       or diversity.
 
   # Sanity check
   if (m <= 0) {
     print("Error: m less or equal than zero during recursion.\n")
     exit(0)
   }
-  
+
   # First step: Find the sub-taxa (children nodes) of the current taxon
   # that has members in user-provided data
   taxon <- as.integer(taxon)
   children <- nodes$id[nodes$parent == taxon & nodes$id != taxon]
   children <- intersect(children, names(countIDs))
-  
+
   # Condition to end recursion
   if (length(children) == 0) {
     if (replacement == "no") {
@@ -234,20 +234,20 @@ TS_Algorithm_Recursion <- function(taxon, m, nodes, countIDs,
       return(rep(as.character(taxon), m))
     }
   }
-  
+
   childrenCount <- countIDs[as.character(children)]
   childrenCountSpp <- countSpp[as.character(children)]
-  
+
   # Sanity check - in a few cases, the number of sequences may be greater than the number of species
   # We saw this happening only in terminal nodes where there's both a species and a subspecies, as our
   # mapping of taxID2species ends at the species level.
   # Therefore, if that's the case, replace the number of known species by the number of child sequences.
   childrenCountSpp[childrenCount > childrenCountSpp] <- childrenCount[childrenCount > childrenCountSpp]
-  
+
 
   # For cases when one taxon isn't a leaf node, but is an input ID that should
   # be available to sample along its children.
-  # Example of this case is an input with Homo sapiens (9606), 
+  # Example of this case is an input with Homo sapiens (9606),
   # H. sapiens neanderthalensis (63221) and H. sapiens ssp. denisova (741158).
   if (sum(childrenCount) < countIDs[as.character(taxon)]) {
     childrenCount <- c(childrenCount, countIDs[as.character(taxon)])
@@ -258,7 +258,7 @@ TS_Algorithm_Recursion <- function(taxon, m, nodes, countIDs,
 
   m_i <- rep.int(0, length(childrenCount))
   names(m_i) <- names(childrenCount)
-  
+
   # Allocating m_i to the children taxa at last.
   # Diversity mode:
   #   Normal: allocate ensuring that any two taxa differ by at most 1 if
@@ -315,7 +315,7 @@ TS_Algorithm_Recursion <- function(taxon, m, nodes, countIDs,
     else if (method == "balance" & randomize == "yes") {
       m_i <- table(sample(names(childrenCount), m, replace = TRUE))
     }
-  
+
   # Require specific IDs (and their parents/ancestors) to be present.
   # If any required ID has a lower m_i allocated than needed (informed by
   # requireIDs), reallocate from another ID in m_i.
@@ -359,8 +359,8 @@ TS_Algorithm_Recursion <- function(taxon, m, nodes, countIDs,
       }
 #      child <- sample(names(childrenCount[childrenCount > m_i]), m)
 #      m_i[child] <- m_i[child] + 1
-      
-      
+
+
       #    m <- m - 1
     }
     else if (method == "diversity" & randomize == "after_first_round") {
@@ -380,7 +380,7 @@ TS_Algorithm_Recursion <- function(taxon, m, nodes, countIDs,
       }
       #    m <- m - 1
     }
-    
+
     else if (method == "diversity" & randomize == "yes") {
       while (m > 0 & length(childrenCount[childrenCount > m_i]) > 0) {
         tmp <- childrenCountSpp[childrenCount > m_i]/sum(childrenCountSpp[childrenCount > m_i])
@@ -396,7 +396,7 @@ TS_Algorithm_Recursion <- function(taxon, m, nodes, countIDs,
     else if (method == "balance" & randomize == "yes") {
       m_i <- table(sample(names(childrenCount), m, replace = TRUE, prob = childrenCountSpp/sum(childrenCountSpp)))
     }
-    
+
     # Require specific IDs (and their parents/ancestors) to be present.
     # If any required ID has a lower m_i allocated than needed (informed by
     # requireIDs), reallocate from another ID in m_i.
@@ -439,13 +439,13 @@ TS_Algorithm_Recursion <- function(taxon, m, nodes, countIDs,
                                             requireIDs, sampling))
     }
   }
-  
+
   return(outputIDs)
 }
 
 
 TS_Algorithm <- function(taxon, m, nodes, countIDs, method = "diversity",
-                         randomize = "no", replacement = "no", 
+                         randomize = "no", replacement = "no",
                          ignoreIDs = NULL, requireIDs = NULL,
                          ignoreNonLeafID = NULL, sampling = "agnostic") {
   # Wrapper for the Taxon Sampling. Provides support for performance, for
@@ -462,10 +462,10 @@ TS_Algorithm <- function(taxon, m, nodes, countIDs, method = "diversity",
   #   replacement: (char) whether the algorithm allows to repeat IDs in order
   #                       to maximize taxonomy diversity and to reach m IDs
   #                       in the output.
-  #   randomize: (char) whether the algorithm will choose IDs randomly or 
+  #   randomize: (char) whether the algorithm will choose IDs randomly or
   #                  maintaining a balanced allocation (m_i differing by no
   #                  more than 1 if the maximum possible value wasn't reached).
-  #   method: (char) whether it favors balanced taxa representation 
+  #   method: (char) whether it favors balanced taxa representation
   #                  (method = "balance") or maximized taxa representation
   #                  (method = "diversity").
   #   ignoreIDs: (char) IDs that mustn't appear in the output.
@@ -474,18 +474,18 @@ TS_Algorithm <- function(taxon, m, nodes, countIDs, method = "diversity",
   #                           to leaf nodes and won't exclude its children from
   #                           the analysis, unlike ignoreIDs.
   #   sampling: (char) whether to sample species in an agnostic manner ("agnostic")
-  #                    or based on known species diversity ("known_species") 
+  #                    or based on known species diversity ("known_species")
   #
   # Returns:
   #   outputIDs: (vector) vector of IDs with maximized taxonomy balance
   #                       or diversity.
-  
+
   # Reduce the node information to the necessary only, reduces search time.
   Simplify_Nodes(nodes, countIDs)
 
   if (!is.null(ignoreIDs)) {
     ignoreIDs <- as.integer(ignoreIDs)
-    
+
     # Sanity check: filter IDs that aren't part of NCBI notation.
     if (!all(is.element(ignoreIDs, nodes$id))) {
       cat("Warning: the following inputs are not part of NCBI taxonomy IDs",
@@ -493,7 +493,7 @@ TS_Algorithm <- function(taxon, m, nodes, countIDs, method = "diversity",
           ignoreIDs[!is.element(ignoreIDs, nodes$id)], "\n")
       ignoreIDs <- ignoreIDs[is.element(ignoreIDs, nodes$id)]
     }
-    
+
     # Sanity check: unique ID inputs, remove duplicates.
     if (any(duplicated(ignoreIDs))) {
       cat("Warning: some required IDs are repeated,",
@@ -501,7 +501,7 @@ TS_Algorithm <- function(taxon, m, nodes, countIDs, method = "diversity",
           ignoreIDs[duplicated(ignoreIDs)], "\n")
       ignoreIDs <- unique(ignoreIDs)
     }
-    
+
     # Make sure none of the ignoreIDs is a parent/ancestor of another.
     # It eases the processing of the following steps.
     for (id in ignoreIDs) {
@@ -510,15 +510,15 @@ TS_Algorithm <- function(taxon, m, nodes, countIDs, method = "diversity",
         ignoreIDs <- ignoreIDs[ignoreIDs != id]
       }
     }
-    
+
     # Subtract the presence of the ignoreIDs from the countIDs.
     for (id in ignoreIDs) {
       parentIDs <- as.character(allparents(id, nodes = nodes))
       countIDs[parentIDs] <- countIDs[parentIDs] - countIDs[as.character(id)]
     }
     countIDs <- countIDs[countIDs > 0]
-    
-    # Pruning the children of removed nodes. 
+
+    # Pruning the children of removed nodes.
     orphans <- nodes$id[!is.element(nodes$parent, names(countIDs)) &
                          is.element(nodes$id, names(countIDs))]
     while (length(orphans) > 0) {
@@ -527,10 +527,10 @@ TS_Algorithm <- function(taxon, m, nodes, countIDs, method = "diversity",
                            is.element(nodes$id, names(countIDs))]
     }
   }
-  
+
   if (!is.null(ignoreNonLeafID)) {
     ignoreNonLeafID <- as.integer(ignoreNonLeafID)
-    
+
     # Sanity check: filter IDs that aren't part of NCBI notation.
     if (!all(is.element(ignoreNonLeafID, nodes$id))) {
       cat("Warning: the following inputs are not part of NCBI taxonomy IDs",
@@ -538,7 +538,7 @@ TS_Algorithm <- function(taxon, m, nodes, countIDs, method = "diversity",
           ignoreNonLeafID[!is.element(ignoreNonLeafID, nodes$id)], "\n")
       ignoreNonLeafID <- ignoreNonLeafID[is.element(ignoreNonLeafID, nodes$id)]
     }
-    
+
     # Sanity check: unique ID inputs, remove duplicates.
     if (any(duplicated(ignoreNonLeafID))) {
       cat("Warning: some required IDs are repeated,",
@@ -546,7 +546,7 @@ TS_Algorithm <- function(taxon, m, nodes, countIDs, method = "diversity",
           ignoreNonLeafID[duplicated(ignoreNonLeafID)], "\n")
       ignoreNonLeafID <- unique(ignoreNonLeafID)
     }
-    
+
     # Make sure every ignoreNonLeafID is not a leaf node
     # (i.e. not just a consequence of its children).
     for (id in ignoreNonLeafID) {
@@ -558,10 +558,10 @@ TS_Algorithm <- function(taxon, m, nodes, countIDs, method = "diversity",
       }
     }
   }
-  
+
   if (!is.null(requireIDs)) {
     requireIDs <- as.integer(requireIDs)
-    
+
     # Sanity check: only IDs that are present in the input.
     if (!all(is.element(requireIDs, nodes$id))) {
       cat("Warning: the following required IDs are not part of your input",
@@ -569,7 +569,7 @@ TS_Algorithm <- function(taxon, m, nodes, countIDs, method = "diversity",
           requireIDs[!is.element(requireIDs, nodes$id)], "\n")
       requireIDs <- requireIDs[is.element(requireIDs, nodes$id)]
     }
-    
+
     # Sanity check: remove IDs that has any ignoreIDs as its parent.
     if (!all(is.element(requireIDs, names(countIDs)))) {
       cat("Warning: the following required IDs are children or part of your",
@@ -577,7 +577,7 @@ TS_Algorithm <- function(taxon, m, nodes, countIDs, method = "diversity",
           requireIDs[!is.element(requireIDs, names(countIDs))], "\n")
       requireIDs <- requireIDs[is.element(requireIDs, names(countIDs))]
     }
-    
+
     # Sanity check: unique ID inputs, remove duplicates.
     if (any(duplicated(requireIDs))) {
       cat("Warning: some required IDs are repeated,",
@@ -585,7 +585,7 @@ TS_Algorithm <- function(taxon, m, nodes, countIDs, method = "diversity",
           requireIDs[duplicated(requireIDs)], "\n")
       requireIDs <- unique(requireIDs)
     }
-    
+
     if (length(requireIDs) > 0) {
       requireIDs <- TS_TaxonomyData(requireIDs, nodes)
     } else {
@@ -593,11 +593,11 @@ TS_Algorithm <- function(taxon, m, nodes, countIDs, method = "diversity",
 #      print("Here!")
     }
   }
-  
+
   # Reduce, once again, the node information to the necessary only,
   # reduces search time.
   Simplify_Nodes(nodes, countIDs)
-  
+
   # Ensure m <= number of valid ids.
   if (!is.null(idsFile) & isTRUE(file.exists(as.character(idsFile)))) { #parsing variable if file
     ids <- read.table(idsFile, sep = "\t", header = FALSE, comment.char = "")
@@ -642,7 +642,7 @@ RandomSampling <- function(idsFile, nodes, n = 100) {
   } else {
     ids <- as.integer(idsFile)  # assume it's a test.name or back.name, for now
   }
-  
+
   # Sanity check: filter IDs that aren't part of NCBI notation.
   if (!all(is.element(ids, nodes$id))) {
     cat("Warning: the following inputs are not part of NCBI taxonomy IDs",
@@ -650,7 +650,7 @@ RandomSampling <- function(idsFile, nodes, n = 100) {
         ids[!is.element(ids, nodes$id)], "\n")
     ids <- ids[is.element(ids, nodes$id)]
   }
-  
+
   # Sanity check: unique ID inputs, remove duplicates.
   if (any(duplicated(ids))) {
     cat("Warning: some ids are repeated, using only one instance of each.\n",
@@ -679,32 +679,32 @@ Evaluate_TS <- function(outputIDs, nodes, countIDs) {
   #                evaluate outoutIDs.
   # Returns:
   #   listTaxon: (char) children taxa selected at least once per level.
-  
-  selectedIDs <- TS_TaxonomyData(outputIDs, nodes) 
+
+  selectedIDs <- TS_TaxonomyData(outputIDs, nodes)
   listTaxon <- list()
   listBias <- list()
-  
+
   # Find the sub-taxa (children nodes) of the current taxon
   children <- 1
   while (length(children) > 0) {
     taxon <- as.integer(children)
-    children <- nodes$id[is.element(nodes$parent, taxon) & 
+    children <- nodes$id[is.element(nodes$parent, taxon) &
                          !is.element(nodes$id, taxon)]
     children <- intersect(children, names(countIDs))
 
     selectedChildren <- intersect(children, names(selectedIDs))
     listTaxon <- c(listTaxon, list(selectedChildren))
   }
-  
+
   # Metric: bias
   # Description: how much the data differs from the uniform distribution among
   #              the children sharing the same parent taxon, over the
   #              current taxonomic level.
-  
+
 #  children <- 1
 #  while (length(children) > 0) {
 #    taxon <- as.integer(children)
-#    children <- nodes$id[is.element(nodes$parent, taxon) & 
+#    children <- nodes$id[is.element(nodes$parent, taxon) &
 #                         !is.element(nodes$id, taxon)]
 #    children <- intersect(children, names(countIDs))
 #
@@ -715,9 +715,9 @@ Evaluate_TS <- function(outputIDs, nodes, countIDs) {
 #      levelBias <- levelBias + sd(countChildren)
 #    }
 #    listBias <- c(listBias, list(levelBias))
-#  }  
+#  }
 
-  return(listTaxon) 
+  return(listTaxon)
 }
 
 
