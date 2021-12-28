@@ -35,6 +35,8 @@ plot.taxonsampling <- function(x, ...)
 
   nodes <- data.tree::as.Node(nodes, pathDelimiter = "|")
   nodes <- data.tree::ToListExplicit(nodes, unname = TRUE)
-  return(networkD3::radialNetwork(nodes, fontSize = 8))
+  return(networkD3::radialNetwork(nodes, fontSize = 8,
+                                  nodeColour = "#00aaaa55",
+                                  nodeStroke = "#00aaaa55"))
 
 }
