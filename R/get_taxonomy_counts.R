@@ -67,7 +67,7 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
       ids_df <- as.data.frame(
         data.table::fread(ids_file, sep = "\t",
                           col.names = c("taxID", "seqID"),
-                          verbose = verbose))
+                          verbose = FALSE))
     } else {
       stop("File ", ids_file, " not found.")
     }
@@ -84,7 +84,7 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
                         sep = "|", strip.white = TRUE,
                         colClasses = c("numeric", "numeric", rep("NULL", 17)),
                         col.names = c("id", "parent"),
-                        verbose = verbose))
+                        verbose = FALSE))
   }
 
   # Filter IDs that aren't part of NCBI notation.

@@ -1,4 +1,4 @@
-#' @importFrom  dplyr %>%
+library(dplyr)
 
 taxlist <- get_taxonomy_counts(taxonomy_path = "data_files/taxdump/",
                                ids_file      = "data_files/metadata/TaxID2SeqID.txt") %>%

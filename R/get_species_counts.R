@@ -50,7 +50,7 @@ get_species_counts <- function(taxlist,
       spp_df <- as.data.frame(
         data.table::fread(spp_file, sep = "\t",
                           col.names = c("taxID", "species_count"),
-                          verbose = verbose))
+                          verbose = FALSE))
     }
   }
 
