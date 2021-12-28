@@ -58,27 +58,29 @@ for (k in 1:nrow(pars)){
   out <- vector("list", n)
   names(out) <- paste0("Rep", 1:n)
   for (i in 1:n){
-    try({
-      out[[i]]$tl <- run_TS(taxlist          = taxlist,
-                            taxon            = 40674,
-                            m                = pars$m[k],
-                            seq_file         = NULL,
-                            out_file         = NULL,
-                            method           = pars$meth[k],
-                            randomize        = pars$rand[k],
-                            replacement      = pars$repl[k],
-                            ignoreIDs        = 9598,
-                            requireIDs       = 9606,
-                            ignoreNonLeafIDs = NULL,
-                            sampling         = pars$samp[k],
-                            verbose          = FALSE)
+    out[[i]]$tl <- run_TS(taxlist          = taxlist,
+                          taxon            = 40674,
+                          m                = pars$m[k],
+                          seq_file         = NULL,
+                          out_file         = NULL,
+                          method           = pars$meth[k],
+                          randomize        = pars$rand[k],
+                          replacement      = pars$repl[k],
+                          ignoreIDs        = 9598,
+                          requireIDs       = 9606,
+                          ignoreNonLeafIDs = NULL,
+                          sampling         = pars$samp[k],
+                          verbose          = FALSE)
 
-      out[[i]]$perf <- evaluate_TS(out[[i]]$tl)
-      out[[i]]$tl$nodes  <- NULL
-      out[[i]]$tl$spp_df <- NULL
-    })
+    out[[i]]$perf <- evaluate_TS(out[[i]]$tl)
+    out[[i]]$tl$nodes  <- NULL
+    out[[i]]$tl$spp_df <- NULL
   }
+
   output[[k]]$out <- out
 }
 
 saveRDS(output, "./results/test.rds")
+
+
+
