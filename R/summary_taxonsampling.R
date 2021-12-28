@@ -20,7 +20,7 @@ summary.taxonsampling <- function(object, ...)
     message("Processed taxonsampling object returned by run_TS() with input parameters:")
     for (i in seq_along(names(object$ts.params))){
       if(is.null(object$ts.params[[i]])) object$ts.params[[i]] <- "NULL"
-      message(names(object$ts.params)[i], ": ", object$ts.params[[i]])
+      message(names(object$ts.params)[i], ": ", paste(object$ts.params[[i]], collapse = ","))
     }
     message(rep("-", 70))
   }

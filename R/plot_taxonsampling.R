@@ -21,12 +21,20 @@ plot.taxonsampling <- function(x, ...)
   }
 
   nodes <- x$nodes[x$nodes$id %in% x$outputIDs, ]
-  nodes$pathString <- paste(x$ts.params$taxon,
-                            nodes$parent,
-                            nodes$id,
-                            sep = "|")
+
+  nodes$pathString <- sapply(
+    as.list(nodes$id),
+    function(ppi){
+      y <- ppi
+      while(as.character(y) != as.character(x$ts.params$taxon)){
+        y       <- x$nodes$parent[x$nodes$id == y]
+        ppi <- c(ppi, y)
+      }
+      paste(ppi[length(ppi):1], collapse = "|")
+    })
+
   nodes <- data.tree::as.Node(nodes, pathDelimiter = "|")
   nodes <- data.tree::ToListExplicit(nodes, unname = TRUE)
-  return(networkD3::radialNetwork(nodes))
+  return(networkD3::radialNetwork(nodes, fontSize = 8))
 
 }
