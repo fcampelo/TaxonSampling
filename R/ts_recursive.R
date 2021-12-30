@@ -70,7 +70,6 @@ ts_recursive <- function(taxlist, verbose = TRUE) {
   # species level.
   # If that's the case, replace the number of known species by the number of
   # child sequences.
-  # TODO: check this with Francisco
   childrenCountSpp[childrenCount > childrenCountSpp] <- childrenCount[childrenCount > childrenCountSpp]
 
 

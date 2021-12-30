@@ -80,7 +80,7 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
   # Extract all nodes from NCBI taxonomy
   if(is.null(nodes)){
     nodes <- as.data.frame(
-      data.table::fread("./data_files/taxdump/nodes.dmp",
+      data.table::fread(paste(taxonomy_path, "nodes.dmp", sep = "/"),
                         sep = "|", strip.white = TRUE,
                         colClasses = c("numeric", "numeric", rep("NULL", 17)),
                         col.names = c("id", "parent"),

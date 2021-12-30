@@ -13,7 +13,8 @@
 #' @param unzip The unzip method to be used. See the documentation of
 #' \code{utils::unzip()} for details.
 #' @param url URL of the full NCBI taxonomy file.
-#' @param timeout maximum time allowed for the download
+#' @param timeout maximum time allowed for the download, in seconds.
+#' Increase when under a slow connection.
 #' @param ... additional attributes (currently ignored)
 #'
 #' @export
@@ -42,28 +43,28 @@ retrieve_NCBI_taxonomy <- function(target.dir,
 
   if(!dir.exists(target.dir)){
     dir.create(target.dir, recursive = TRUE)
-  } else {
-    filelist <- dir(target.dir, full.names = TRUE)
-    unlink(filelist, recursive = TRUE, force = TRUE)
+  }
+  if(file.exists(paste0(target.dir, "/tmp_NCBI_taxdump.zip"))){
+    file.remove(paste0(target.dir, "/tmp_NCBI_taxdump.zip"))
   }
 
   oldtimeout <- getOption("timeout")
   options(timeout = timeout)
   res1 <- utils::download.file(url,
                                quiet    = FALSE,
-                               destfile = paste0(target.dir, "/tmpdata.zip"),
+                               destfile = paste0(target.dir, "/tmp_NCBI_taxdump.zip"),
                                cacheOK  = FALSE,
                                method   = method)
   options(timeout = oldtimeout)
 
   if(res1 != 0) stop("Error downloading file \n", url)
 
-  utils::unzip(paste0(target.dir, "/tmpdata.zip"),
+  utils::unzip(paste0(target.dir, "/tmp_NCBI_taxdump.zip"),
                unzip = unzip,
                exdir = target.dir)
   unlink(paste0(target.dir, "/__MACOSX"), recursive = TRUE, force = TRUE)
 
-  file.remove(paste0(target.dir, "/tmpdata.zip"))
+  file.remove(paste0(target.dir, "/tmp_NCBI_taxdump.zip"))
 
   invisible(TRUE)
 }

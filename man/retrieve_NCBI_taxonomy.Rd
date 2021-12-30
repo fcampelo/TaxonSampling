@@ -27,7 +27,8 @@ documentation of \code{utils::download.file()}.}
 
 \item{url}{URL of the full NCBI taxonomy file.}
 
-\item{timeout}{maximum time allowed for the download}
+\item{timeout}{maximum time allowed for the download, in seconds.
+Increase when under a slow connection.}
 
 \item{...}{additional attributes (currently ignored)}
 }
