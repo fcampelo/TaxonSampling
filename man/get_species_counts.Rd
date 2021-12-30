@@ -7,9 +7,7 @@
 get_species_counts(taxlist, spp_df = NULL, spp_file = NULL, verbose = TRUE)
 }
 \arguments{
-\item{taxlist}{a list object of class _taxonsampling_, containing (at least) a
-field `$countIDs`, a numeric vector with the counts of the number of
-taxonomy IDs belonging to each taxon (calculated as part of
+\item{taxlist}{a list object of class _taxonsampling_, returned by
 [get_taxonomy_counts()]).}
 
 \item{spp_df}{two-column data frame with the input taxon IDs in the first

@@ -4,7 +4,7 @@
 #' to the desired balance / diversity.
 #'
 #' @param taxlist list object of class _taxonsampling_, returned by
-#' [get_species_count()]
+#' [get_species_count()].
 #' @param taxon Taxon ID from which to start sampling children taxa (single
 #' character or integer value)
 #' @param m desired sample size

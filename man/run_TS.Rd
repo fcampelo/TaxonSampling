@@ -22,7 +22,7 @@ run_TS(
 }
 \arguments{
 \item{taxlist}{list object of class _taxonsampling_, returned by
-[get_species_count()]}
+[get_species_count()].}
 
 \item{taxon}{Taxon ID from which to start sampling children taxa (single
 character or integer value)}
