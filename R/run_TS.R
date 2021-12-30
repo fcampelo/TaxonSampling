@@ -103,7 +103,8 @@ run_TS <- function(taxlist, taxon, m,
 
   # Call the TS algorithm itself.
   if(verbose) message("Running recursive sampling")
-  taxlist$ts.process <- list(taxon = taxon, m = m)
+  taxlist$ts.process <- list(taxon = taxon, m = m,
+                             outputIDs = character())
   taxlist$outputIDs  <- c(taxlist$ts.process$outputIDs,
                           ts_recursive(taxlist, verbose))
   if(verbose) cat("\r", rep(" ", 50), "\r")

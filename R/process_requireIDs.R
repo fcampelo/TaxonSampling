@@ -1,8 +1,6 @@
 process_requireIDs <- function(taxlist) {
 
-  taxlist$ts.process$requireIDs.list <- NULL
-  taxlist$ts.process$outputIDs       <- character()
-
+  taxlist$ts.process$requireIDs <- numeric()
   requireIDs <- taxlist$ts.params$requireIDs
   if (!is.null(requireIDs)) {
     # Filter IDs that aren't part of NCBI notation.
@@ -20,12 +18,28 @@ process_requireIDs <- function(taxlist) {
       requireIDs <- requireIDs[-idx]
     }
 
+    # Remove requireIDs that are parents of other requireIDs, since this is
+    # redundant - EXCEPT if the parent id is at level "species" or below.
+    for (id in requireIDs) {
+      idpars <- CHNOSZ::allparents(id, nodes = taxlist$nodes)
+      idpars <- taxlist$nodes[taxlist$nodes$id %in% idpars, ]
+      idpars <- idpars$id[!(idpars$level %in% c("species",
+                                                "subspecies",
+                                                "varietas"))]
+      idpars <- idpars[idpars != id]
+      if (length(idpars) > 0) {
+        requireIDs <- requireIDs[!(requireIDs %in% idpars)]
+      }
+    }
+
     if (length(requireIDs) > 0) {
-      taxlist$ts.process$outputIDs <- requireIDs
-      taxlist$ts.process$m         <- taxlist$ts.process$m - length(requireIDs)
+      parentIDs <- table(unlist(lapply(requireIDs,
+                                       CHNOSZ::allparents,
+                                       nodes = taxlist$nodes)))
+      taxlist$ts.process$requireIDs <- as.numeric(parentIDs)
+      names(taxlist$ts.process$requireIDs) <- names(parentIDs)
 
     }
-    taxlist$ts.params$requireIDs <- requireIDs
   }
 
   return(taxlist)

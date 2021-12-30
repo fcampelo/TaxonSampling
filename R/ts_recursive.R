@@ -91,10 +91,17 @@ ts_recursive <- function(taxlist, verbose = TRUE) {
                  substr(taxlist$ts.params$randomize, 1, 1),
                  sep = "_")
 
+  # Ensure requireIDs are present in the sample
+  m_i  <- 0 * childrenCount
+  reqs <- which(names(m_i) %in% taxlist$ts.process$requireIDs)
+  if(length(reqs) > 0){
+    m_i[reqs] <- 1
+  }
+
   # Perform sampling at current recursion level
   m_i <- do.call(fname,
                  args = list(m                = m,
-                             m_i              = 0 * childrenCount,
+                             m_i              = m_i,
                              childrenCount    = childrenCount,
                              childrenCountSpp = childrenCountSpp))
 

@@ -10,8 +10,8 @@ taxlist <- get_taxonomy_counts(taxonomy_path = "data_files/taxdump/",
          method           = "diversity",                               # sampling priority ("diversity" or "balanced")
          randomize        = "after_first_round",                       # randomization strategy
          replacement      = FALSE,                                     # replacement mode
-         ignoreIDs        = c(9443, 9263),                             # ignore: primates and marsupials
-         requireIDs       = 10090,                                     # must have: mouse
+         ignoreIDs        = NULL,
+         requireIDs       = c(9443, 9263, 10090, 10091, 9606),         # must have: primates, marsupials, Mus musculus, Mus musculus castaneus, H. Sapiens
          sampling         = "agnostic")                                # Sampling strategy
 
 summary(taxlist)
