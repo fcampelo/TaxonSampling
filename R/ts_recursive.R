@@ -36,7 +36,7 @@ ts_recursive <- function(taxlist, verbose = TRUE) {
   if(verbose) {
     cat("\r", rep(" ", 50),
         "\r--> Recursive sampling:",
-        paste(rep(".", sample.int(8, 1)), collapse = ""))
+        paste(rep(".", sample.int(10, 1)), collapse = ""))
   }
 
   # extract relevant variables for recursive call
