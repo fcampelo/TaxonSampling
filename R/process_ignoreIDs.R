@@ -40,7 +40,7 @@ process_ignoreIDs <- function(taxlist) {
                             (taxlist$nodes$id %in% names(taxlist$countIDs))]
     }
 
-    #taxlist$ts.params$ignoreIDs <- ignoreIDs
+    # taxlist$ts.process$ignoreIDs <- ignoreIDs
   }
 
   return(taxlist)

@@ -1,5 +1,7 @@
 sample_a_b_y <- function(m, m_i, childrenCount, childrenCountSpp, ...){
-  x <- table(sample(names(childrenCount), m + sum(m_i), replace = TRUE))
+  x <- table(sample(names(childrenCount),
+                    size = m + sum(m_i),
+                    replace = TRUE))
 
   for (nn in names(m_i)){
     if(!(nn %in% names(x))) {
