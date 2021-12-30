@@ -65,8 +65,8 @@ for (k in 1:nrow(pars)){
                           method           = pars$meth[k],
                           randomize        = pars$rand[k],
                           replacement      = pars$repl[k],
-                          ignoreIDs        = 9598,
-                          requireIDs       = 9606,
+                          ignoreIDs        = NULL,
+                          requireIDs       = c(9443, 9263, 10090, 10091, 9606),
                           sampling         = pars$samp[k],
                           verbose          = FALSE)
 
