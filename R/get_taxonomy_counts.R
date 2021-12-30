@@ -21,8 +21,9 @@
 #' @param verbose logical: regulates function echoing to console.
 #' @param nodes data.frame containing the pre-processed information about
 #' the NCBI taxonomy structure. This is generated either by using
-#' [CHNOSZ::getnodes()], or as a result of a previous call to this
-#' function. If `nodes` is not `NULL` then `taxonomy_path` is ignored.
+#' [CHNOSZ::getnodes()], or as a result of a previous call to
+#' [get_taxonomy_counts()]. If `nodes` is not `NULL` then `taxonomy_path` is
+#' ignored.
 #'
 #' @return list object of class _taxonsampling_, containing:
 #' \itemize{
@@ -82,9 +83,10 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
     nodes <- as.data.frame(
       data.table::fread(paste(taxonomy_path, "nodes.dmp", sep = "/"),
                         sep = "|", strip.white = TRUE,
-                        colClasses = c("numeric", "numeric", rep("NULL", 17)),
-                        col.names = c("id", "parent"),
+                        colClasses = c("numeric", "numeric", "character", rep("NULL", 16)),
+                        col.names = c("id", "parent", "level"),
                         verbose = FALSE))
+    nodes$level <- gsub("\\t", "", nodes$level)
   }
 
   # Filter IDs that aren't part of NCBI notation.

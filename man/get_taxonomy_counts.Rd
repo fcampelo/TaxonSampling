@@ -32,8 +32,9 @@ the ">" line starter) in the second column. Ignored if
 
 \item{nodes}{data.frame containing the pre-processed information about
 the NCBI taxonomy structure. This is generated either by using
-[CHNOSZ::getnodes()], or as a result of a previous call to this
-function. If `nodes` is not `NULL` then `taxonomy_path` is ignored.}
+[CHNOSZ::getnodes()], or as a result of a previous call to
+[get_taxonomy_counts()]. If `nodes` is not `NULL` then `taxonomy_path` is
+ignored.}
 
 \item{verbose}{logical: regulates function echoing to console.}
 }
