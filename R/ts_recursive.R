@@ -98,34 +98,6 @@ ts_recursive <- function(taxlist, verbose = TRUE) {
                              childrenCount    = childrenCount,
                              childrenCountSpp = childrenCountSpp))
 
-  # TODO: check the whole requireIDs thing.
-  # Require specific IDs (and their parents/ancestors) to be present.
-  # If any required ID has a lower m_i allocated than needed (informed by
-  # requireIDs), reallocate from another ID in m_i.
-  #  if (!is.null(requireIDs)) {
-  #    req <- is.element(names(m_i), names(requireIDs))
-  #    toAdd <- m_i[req] < requireIDs[names(m_i[req])]
-  #    if (randomize == "no") {
-  #      while (any(toAdd)) {
-  #        subtract <- m_i[setdiff(names(m_i), names(toAdd))]
-  #        subtract <- sample(names(subtract[subtract == max(subtract)]), 1)
-  #        m_i[subtract] <- m_i[subtract] - 1
-  #        add <- sample(names(toAdd[toAdd == TRUE]), 1)
-  #        m_i[add] <- m_i[add] + 1
-  #        toAdd <- m_i[req] < requireIDs[names(m_i[req])]
-  #      }
-  #    } else if (randomize == "yes") {
-  #      while (any(toAdd)) {
-  #        subtract <- m_i[setdiff(names(m_i), names(toAdd))]
-  #        subtract <- sample(names(subtract[subtract > 0]), 1)
-  #        m_i[subtract] <- m_i[subtract] - 1
-  #        add <- sample(names(toAdd[toAdd == TRUE]), 1)
-  #        m_i[add] <- m_i[add] + 1
-  #        toAdd <- m_i[req] < requireIDs[names(m_i[req])]
-  #      }
-  #    }
-  #  }
-
   outputIDs <- character()
   for (id in names(m_i)) {
     if (m_i[id] > 0){

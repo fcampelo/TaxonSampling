@@ -14,6 +14,5 @@ taxlist <- get_taxonomy_counts(taxonomy_path = "data_files/taxdump/",
          requireIDs       = 10090,                                     # must have: mouse
          sampling         = "agnostic")                                # Sampling strategy
 
-
 summary(taxlist)
 plot(taxlist)
