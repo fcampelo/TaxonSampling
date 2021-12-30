@@ -33,15 +33,17 @@
 ts_recursive <- function(taxlist, verbose = TRUE) {
 
 
-  if(verbose) {
-    cat("\r", rep(" ", 50),
-        "\r--> Recursive sampling:",
-        paste(rep(".", sample.int(10, 1)), collapse = ""))
-  }
-
   # extract relevant variables for recursive call
   taxon <- taxlist$ts.process$taxon
   m     <- taxlist$ts.process$m
+
+  if(verbose) {
+    cat("\r", rep(" ", 80),
+        "\r--> Recursive sampling:",
+        paste(rep(".",
+                  min(40, ceiling(60 * m/taxlist$ts.params$m))),
+              collapse = ""))
+  }
 
   # Sanity check
   if (m <= 0) stop("m less or equal than zero during recursion.")

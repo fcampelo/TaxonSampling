@@ -8,11 +8,11 @@ taxlist <- get_taxonomy_counts(taxonomy_path = "data_files/taxdump/",
          seq_file         = "data_files/fasta/mit_vertebrata.fasta",   # multi-fasta file from where sequences should be sampled
          out_file         = "results/output_TS.fasta",                 # output file for saving results
          method           = "diversity",                               # sampling priority ("diversity" or "balanced")
-         randomize        = "after_first_round",                       # randomization strategy
+         randomize        = "yes",                       # randomization strategy
          replacement      = FALSE,                                     # replacement mode
-         ignoreIDs        = NULL,
-         requireIDs       = c(9443, 9263, 10090, 10091, 9606),         # must have: primates, marsupials, Mus musculus, Mus musculus castaneus, H. Sapiens
-         sampling         = "agnostic")                                # Sampling strategy
+         ignoreIDs        = 10090,
+         requireIDs       = c(9443, 9263, 10091, 9606),         # must have: primates, marsupials, Mus musculus, Mus musculus castaneus, H. Sapiens
+         sampling         = "known_species")                                # Sampling strategy
 
 summary(taxlist)
 plot(taxlist)

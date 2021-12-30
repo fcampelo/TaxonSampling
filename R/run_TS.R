@@ -12,7 +12,7 @@
 #' containing the input sequences.
 #' @param out_file character string naming a file to save the output (a
 #' multifasta file). Ignored if `seq_file == NULL`.
-#' @param method sampling method to use. Accepts "balance" (favors balanced taxa
+#' @param method sampling method to use. Accepts "balanced" (favors balanced taxa
 #' representation) or "diversity" (favors maximized taxa representation)
 #' @param randomize randomization strategy: should the algorithm choose IDs
 #' randomly ("yes"), maintaining a balanced allocation ("no"), or with a
@@ -76,7 +76,7 @@ run_TS <- function(taxlist, taxon, m,
                             is.character(requireIDs),
                           is.logical(verbose), length(verbose) == 1)
 
-  if (randomize == "after_first_round" && method == "balance"){
+  if (randomize == "after_first_round" && method == "balanced"){
     stop('Combination of randomize == "after_first_round" and method == "balance" not possible')
   }
 

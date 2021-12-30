@@ -34,7 +34,7 @@ containing the input sequences.}
 \item{out_file}{character string naming a file to save the output (a
 multifasta file). Ignored if `seq_file == NULL`.}
 
-\item{method}{sampling method to use. Accepts "balance" (favors balanced taxa
+\item{method}{sampling method to use. Accepts "balanced" (favors balanced taxa
 representation) or "diversity" (favors maximized taxa representation)}
 
 \item{randomize}{randomization strategy: should the algorithm choose IDs

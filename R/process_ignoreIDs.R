@@ -1,6 +1,6 @@
 process_ignoreIDs <- function(taxlist) {
   ignoreIDs <- taxlist$ts.params$ignoreIDs
-  if (!is.null(ignoreIDs)) {
+  if (!is.null(ignoreIDs) & length(ignoreIDs) > 0) {
     # Filter IDs that aren't part of NCBI notation.
     idx <- which(!(ignoreIDs %in% taxlist$nodes$id))
     if (length(idx) > 0) {
