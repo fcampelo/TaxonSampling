@@ -44,7 +44,7 @@ rand <- c("yes", "no", "after_first_round")
 meth <- c("diversity", "balanced")
 samp <- c("agnostic", "known_species")
 repl <- c(TRUE, FALSE)
-m    <- 50 * (1:8)
+m    <- 50 #* (1:8)
 pars <- expand.grid(rand=rand, meth=meth, samp=samp, repl=repl, m = m,
                     stringsAsFactors = FALSE)
 pars <- pars[-which(pars$meth == "balanced" & pars$rand == "after_first_round"), ]
@@ -67,7 +67,6 @@ for (k in 1:nrow(pars)){
                           replacement      = pars$repl[k],
                           ignoreIDs        = 9598,
                           requireIDs       = 9606,
-                          ignoreNonLeafIDs = NULL,
                           sampling         = pars$samp[k],
                           verbose          = FALSE)
 
