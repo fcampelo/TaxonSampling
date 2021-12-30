@@ -21,14 +21,8 @@ process_requireIDs <- function(taxlist) {
     }
 
     if (length(requireIDs) > 0) {
-      # TODO: Why generate this list?
-      # taxlist$ts.process$requireIDs.list <- get_taxonomy_counts(
-      #   ids_df  = data.frame(taxID = requireIDs,
-      #                        seqID = NA),
-      #   nodes   = taxlist$nodes,
-      #   verbose = FALSE)
       taxlist$ts.process$outputIDs <- requireIDs
-      taxlist$ts.process$m <- taxlist$ts.process$m - length(requireIDs)
+      taxlist$ts.process$m         <- taxlist$ts.process$m - length(requireIDs)
 
     }
     taxlist$ts.params$requireIDs <- requireIDs

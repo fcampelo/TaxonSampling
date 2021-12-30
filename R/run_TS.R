@@ -27,8 +27,6 @@
 #' in the output. Notice that `ignoreIDs` has precedence over `requireIDs`,
 #' i.e., IDs that occur in both will be ignored. `requireIDs` that are children
 #' of any `ignoreIDs` will also be ignored.
-#' @param ignoreNonLeafIDs non-leaf IDs to ignore; won't apply to leaf nodes
-#' and won't exclude children from the sampling (unlike ignoreIDs).
 #' @param sampling sampling mode. Accepts "agnostic" (sample species in a
 #' diversity-agnostic manner) or "known_species" (sample based on known species
 #' diversity).
@@ -48,7 +46,6 @@ run_TS <- function(taxlist, taxon, m,
                    replacement      = FALSE,
                    ignoreIDs        = NULL,
                    requireIDs       = NULL,
-                   ignoreNonLeafIDs = NULL,
                    sampling         = "agnostic",
                    verbose          = TRUE) {
 
@@ -77,9 +74,6 @@ run_TS <- function(taxlist, taxon, m,
                           is.null(requireIDs) ||
                             is.numeric(requireIDs) ||
                             is.character(requireIDs),
-                          is.null(ignoreNonLeafIDs) ||
-                            is.numeric(ignoreNonLeafIDs) ||
-                            is.character(ignoreNonLeafIDs),
                           is.logical(verbose), length(verbose) == 1)
 
   if (randomize == "after_first_round" && method == "balance"){
@@ -91,17 +85,14 @@ run_TS <- function(taxlist, taxon, m,
   taxlist$ts.params$taxlist <- NULL
 
   # Force all IDs to integer
-  if(is.character(taxon)) taxlist$ts.params$taxon <- as.integer(taxon)
-  if(is.character(ignoreIDs)) taxlist$ts.params$ignoreIDs <- as.integer(ignoreIDs)
+  if(is.character(taxon))      taxlist$ts.params$taxon      <- as.integer(taxon)
+  if(is.character(ignoreIDs))  taxlist$ts.params$ignoreIDs  <- as.integer(ignoreIDs)
   if(is.character(requireIDs)) taxlist$ts.params$requireIDs <- as.integer(requireIDs)
-  if(is.character(ignoreNonLeafIDs)) taxlist$ts.params$ignoreNonLeafIDs <- as.integer(ignoreNonLeafIDs)
 
   # ===========================================================================
 
-  # Process ignoreIDs, ignoreNonLeafIDs and requireIDs
-  # TODO: Check process_ignoreNonLeafIDs
+  # Process ignoreIDs and requireIDs
   taxlist <- process_ignoreIDs(taxlist)
-  taxlist <- process_ignoreNonLeafIDs(taxlist)
   taxlist <- process_requireIDs(taxlist)
 
   # Reduce node information to the necessary only, reduces search time.

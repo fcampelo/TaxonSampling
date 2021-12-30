@@ -15,7 +15,6 @@ run_TS(
   replacement = FALSE,
   ignoreIDs = NULL,
   requireIDs = NULL,
-  ignoreNonLeafIDs = NULL,
   sampling = "agnostic",
   verbose = TRUE
 )
@@ -54,9 +53,6 @@ the output.}
 in the output. Notice that `ignoreIDs` has precedence over `requireIDs`,
 i.e., IDs that occur in both will be ignored. `requireIDs` that are children
 of any `ignoreIDs` will also be ignored.}
-
-\item{ignoreNonLeafIDs}{non-leaf IDs to ignore; won't apply to leaf nodes
-and won't exclude children from the sampling (unlike ignoreIDs).}
 
 \item{sampling}{sampling mode. Accepts "agnostic" (sample species in a
 diversity-agnostic manner) or "known_species" (sample based on known species

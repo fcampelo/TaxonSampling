@@ -12,7 +12,6 @@ taxlist <- get_taxonomy_counts(taxonomy_path = "data_files/taxdump/",
          replacement      = FALSE,                                     # replacement mode
          ignoreIDs        = c(9443, 9263),                             # ignore: primates and marsupials
          requireIDs       = 10090,                                     # must have: mouse
-         ignoreNonLeafIDs = NULL,                                      # only internal nodes - above species
          sampling         = "agnostic")                                # Sampling strategy
 
 
