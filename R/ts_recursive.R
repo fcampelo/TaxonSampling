@@ -98,6 +98,13 @@ ts_recursive <- function(taxlist, verbose = TRUE) {
     m_i[reqs] <- taxlist$ts.process$requireIDs[names(m_i)[reqs]]
   }
   m <- m - sum(m_i)
+  # if (m <= 0) {
+  #   stop("m less or equal than zero during recursion with",
+  #        "\ntaxlist$m = ", taxlist$ts.process$m,
+  #        "\nm_i = ", paste(m_i, collapse = ", "),
+  #        "'\n", paste(names(m_i), collapse = ", "),
+  #        "\ntaxon = ", taxlist$ts.process$taxon)
+  # }
 
   # Perform sampling at current recursion level
   m_i <- do.call(fname,
