@@ -21,7 +21,9 @@ Imports:
     data.table (>= 1.0.0),
     assertthat (>= 0.2.1),
     data.tree (>= 1.0.0),
-    networkD3 (>= 0.4.0)
+    networkD3 (>= 0.4.0),
+    parallel,
+    pbapply (>= 1.4.0)
 Suggests: 
 Encoding: UTF-8
 RoxygenNote: 7.1.1

@@ -6,16 +6,24 @@
 \usage{
 retrieve_NCBI_taxonomy(
   target.dir,
+  spp_file = NULL,
   method = "auto",
   unzip = getOption("unzip"),
   url = "https://ftp.ncbi.nih.gov/pub/taxonomy/new_taxdump/new_taxdump.zip",
   timeout = 600,
+  ncpus = 1,
   ...
 )
 }
 \arguments{
 \item{target.dir}{path to the folder where the files will be saved (
 accepts relative and absolute paths)}
+
+\item{spp_file}{path to file for saving the species count for each taxon ID
+(saved as a tsv file)
+two-column data frame with the input taxon IDs in the first
+column, and the corresponding number of known species in the second column.
+Ignored if `ids_file` is not `NULL`.}
 
 \item{method}{Method to be used for downloading files. Current download
 methods are "internal", "wininet" (Windows only) "libcurl", "wget" and
@@ -29,6 +37,8 @@ documentation of \code{utils::download.file()}.}
 
 \item{timeout}{maximum time allowed for the download, in seconds.
 Increase when under a slow connection.}
+
+\item{ncpus}{number of cores to use for species counting.}
 
 \item{...}{additional attributes (currently ignored)}
 }
