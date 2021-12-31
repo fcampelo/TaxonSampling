@@ -82,8 +82,7 @@ retrieve_NCBI_taxonomy <- function(target.dir,
       dir.create(dirname(spp_file), recursive = TRUE)
     }
 
-    message("Extracting species counts. This may take a while...",
-            "\n(Takes longer in Windows than Unix-based systems)")
+    message("Extracting species counts. This may take a while...")
 
     nodes <- as.data.frame(
       data.table::fread(paste(target.dir, "nodes.dmp", sep = "/"),
