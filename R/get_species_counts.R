@@ -11,10 +11,6 @@
 #' @param spp_file path to a tab-separated file containng two two columns,
 #' with the input taxon IDs in the first
 #' column, and the corresponding number of known species in the second column.
-#' **NOTE**: If both `spp_df` and `spp_file` are `NULL`, the species counting is
-#' done internally.
-#' @param ncpus number of cores to use for species counting (if done
-#' internally).
 #' @param verbose logical: regulates function echoing to console.
 #'
 #' @return Input object `taxlist` updated to contain the additional fields:
@@ -32,7 +28,6 @@
 get_species_counts <- function(taxlist,
                                spp_df   = NULL,
                                spp_file = NULL,
-                               ncpus    = 1,
                                verbose  = TRUE) {
   # ===========================================================================
   # Sanity checks
@@ -46,7 +41,7 @@ get_species_counts <- function(taxlist,
                             (is.character(spp_file) &&
                                length(spp_file) == 1 &&
                                file.exists(spp_file)),
-                          assertthat::is.count(ncpus),
+                          is.null(spp_df) + is.null(spp_file) < 2,
                           is.logical(verbose),
                           length(verbose) == 1)
 
@@ -59,15 +54,10 @@ get_species_counts <- function(taxlist,
                         col.names = c("taxID", "species_count"),
                         verbose = FALSE))
 
-  } else if(!is.null(spp_df)){
-    # Get ids from df if passed
-    names(spp_df) <- c("taxID", "species_count")
-
   } else {
-    # Count ids internally
-    spp_df <- get_taxID_spp_counts(nodes = taxlist$nodes,
-                                   ncpus = ncpus,
-                                   verbose = verbose)
+    # Get ids from df if passed
+    names(spp_df)[1:2] <- c("taxID", "species_count")
+
   }
 
   # ===========================================================================
@@ -83,6 +73,11 @@ get_species_counts <- function(taxlist,
   # Update taxlist and return
   taxlist$spp_df   <- spp_df
   taxlist$countSpp <- countSpp
+
+  # Reduces the search size of nodes to the relevant input taxIDs and their
+  # related ancestors/offsprings. Can greatly reduce search/running time for
+  # the remaining functions.
+  taxlist$nodes <- taxlist$nodes[taxlist$nodes$id %in% as.numeric(names(taxlist$countIDs)), ]
 
   class(taxlist) <- unique(c(class(taxlist), "taxonsampling"))
 

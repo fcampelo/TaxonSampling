@@ -1,8 +1,8 @@
 Package: TaxonSampling
 Type: Package
 Title: Hierarchical Taxonomic Sampling for Maximized Diversity at All Levels
-Version: 0.1.5
-Date: 2021-12-20
+Version: 0.1.6
+Date: 2022-01-01
 Language: en-US
 Authors@R: c(person("Francisco", "Lobo",
     email   = "franciscolobo@gmail.com",

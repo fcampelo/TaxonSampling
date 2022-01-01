@@ -4,7 +4,7 @@ ncpus = parallel::detectCores() - 2
 
 taxlist <- get_taxonomy_counts(taxonomy_path = "data_files/taxdump/",
                                ids_file      = "data_files/metadata/TaxID2SeqID.txt") %>%
-  get_species_counts(ncpus = ncpus) %>%
+  get_species_counts(spp_file = "data_files/metadata/TaxID2sppCounts_2022-01-01.tsv") %>%
   run_TS(taxon            = 40674,                                     # root taxon: mammalia
          m                = 200,                                       # number of sequences to sample
          seq_file         = "data_files/fasta/mit_vertebrata.fasta",   # multi-fasta file from where sequences should be sampled

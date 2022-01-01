@@ -4,13 +4,7 @@
 \alias{get_species_counts}
 \title{Return the count of known species in each taxon}
 \usage{
-get_species_counts(
-  taxlist,
-  spp_df = NULL,
-  spp_file = NULL,
-  ncpus = 1,
-  verbose = TRUE
-)
+get_species_counts(taxlist, spp_df = NULL, spp_file = NULL, verbose = TRUE)
 }
 \arguments{
 \item{taxlist}{a list object of class _taxonsampling_, returned by
@@ -22,12 +16,7 @@ Ignored if `ids_file` is not `NULL`.}
 
 \item{spp_file}{path to a tab-separated file containng two two columns,
 with the input taxon IDs in the first
-column, and the corresponding number of known species in the second column.
-**NOTE**: If both `spp_df` and `spp_file` are `NULL`, the species counting is
-done internally.}
-
-\item{ncpus}{number of cores to use for species counting (if done
-internally).}
+column, and the corresponding number of known species in the second column.}
 
 \item{verbose}{logical: regulates function echoing to console.}
 }

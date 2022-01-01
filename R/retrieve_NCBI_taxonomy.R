@@ -42,10 +42,7 @@ retrieve_NCBI_taxonomy <- function(target.dir,
                           length(url) == 1,
                           is.numeric(timeout),
                           length(timeout) == 1,
-                          timeout > 0,
-                          is.null(spp_file) ||
-                            (is.character(spp_file) &&
-                               length(spp_file) == 1))
+                          timeout > 0)
 
   if(!dir.exists(target.dir)){
     dir.create(target.dir, recursive = TRUE)
