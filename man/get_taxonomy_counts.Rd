@@ -14,7 +14,7 @@ get_taxonomy_counts(
 }
 \arguments{
 \item{taxonomy_path}{path to folder containing the NCBI taxonomy files
-(i.e., the contents of _taxdump.zip_, which can be downloaded from
+(i.e., the extracted contents of _taxdump.zip_, which can be downloaded from
 <ftp://ftp.ncbi.nih.gov/pub/taxonomy/> or retrieved using
 [retrieve_NCBI_taxonomy()]).}
 

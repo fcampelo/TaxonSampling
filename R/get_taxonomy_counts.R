@@ -5,7 +5,7 @@
 #' taxonomy graph.
 #'
 #' @param taxonomy_path path to folder containing the NCBI taxonomy files
-#' (i.e., the contents of _taxdump.zip_, which can be downloaded from
+#' (i.e., the extracted contents of _taxdump.zip_, which can be downloaded from
 #' <ftp://ftp.ncbi.nih.gov/pub/taxonomy/> or retrieved using
 #' [retrieve_NCBI_taxonomy()]).
 #' @param ids_file path to a tab-separated file containng two two columns,
