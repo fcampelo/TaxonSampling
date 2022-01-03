@@ -49,10 +49,13 @@ get_species_counts <- function(taxlist,
 
   if(!is.null(spp_file)){
     # Load ids from file if available
+    odt <- options("datatable.showProgress")
+    options(datatable.showProgress = FALSE)
     spp_df <- as.data.frame(
       data.table::fread(spp_file, sep = "\t",
                         col.names = c("taxID", "species_count"),
                         verbose = FALSE))
+    options(odt)
 
   } else {
     # Get ids from df if passed

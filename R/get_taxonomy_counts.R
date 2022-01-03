@@ -65,10 +65,13 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
   # Load ids from file if required
   if(!is.null(ids_file)) {
     if(file.exists(ids_file)){
+      odt <- options("datatable.showProgress")
+      options(datatable.showProgress = FALSE)
       ids_df <- as.data.frame(
         data.table::fread(ids_file, sep = "\t",
                           col.names = c("taxID", "seqID"),
                           verbose = FALSE))
+      options(odt)
     } else {
       stop("File ", ids_file, " not found.")
     }
@@ -80,12 +83,15 @@ get_taxonomy_counts <- function(taxonomy_path = NULL,
 
   # Extract all nodes from NCBI taxonomy
   if(is.null(nodes)){
+    odt <- options("datatable.showProgress")
+    options(datatable.showProgress = FALSE)
     nodes <- as.data.frame(
       data.table::fread(paste(taxonomy_path, "nodes.dmp", sep = "/"),
                         sep = "|", strip.white = TRUE,
                         colClasses = c("numeric", "numeric", "character", rep("NULL", 16)),
                         col.names = c("id", "parent", "level"),
                         verbose = FALSE))
+    options(odt)
     nodes$level <- gsub("\\t", "", nodes$level)
   }
 
