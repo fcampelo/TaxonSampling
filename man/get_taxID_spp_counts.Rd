@@ -4,7 +4,7 @@
 \alias{get_taxID_spp_counts}
 \title{Count number of species under each taxonomy ID}
 \usage{
-get_taxID_spp_counts(taxonomy_path, spp_file, ncpus = 1, verbose = TRUE)
+get_taxID_spp_counts(taxonomy_path, spp_file, ncpus = 1)
 }
 \arguments{
 \item{taxonomy_path}{path to folder containing the NCBI taxonomy files
@@ -16,8 +16,6 @@ get_taxID_spp_counts(taxonomy_path, spp_file, ncpus = 1, verbose = TRUE)
 (saved as a tsv file)}
 
 \item{ncpus}{number of cores to use for species counting.}
-
-\item{verbose}{logical: regulates function echoing to console.}
 }
 \value{
 data frame with species counts per taxon ID.

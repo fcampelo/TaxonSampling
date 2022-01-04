@@ -184,7 +184,7 @@ get_counts <- function(taxonomy_path = NULL,
   countSpp[countSpp == 0] <- 1
 
   # Reduces the search size of nodes to the relevant input taxIDs and their
-  # related ancestors/offsprings. Can greatly reduce search/running time for
+  # related ancestors/offspring. Can greatly reduce search/running time for
   # the remaining functions.
   nodes <- nodes[nodes$id %in% as.numeric(names(countIDs)), ]
 
