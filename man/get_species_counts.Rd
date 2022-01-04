@@ -14,7 +14,7 @@ get_species_counts(taxlist, spp_df = NULL, spp_file = NULL, verbose = TRUE)
 column, and the corresponding number of known species in the second column.
 Ignored if `ids_file` is not `NULL`.}
 
-\item{spp_file}{path to a tab-separated file containng two two columns,
+\item{spp_file}{path to a tab-separated file containing two two columns,
 with the input taxon IDs in the first
 column, and the corresponding number of known species in the second column.}
 

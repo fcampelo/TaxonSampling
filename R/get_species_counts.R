@@ -8,7 +8,7 @@
 #' @param spp_df two-column data frame with the input taxon IDs in the first
 #' column, and the corresponding number of known species in the second column.
 #' Ignored if `ids_file` is not `NULL`.
-#' @param spp_file path to a tab-separated file containng two two columns,
+#' @param spp_file path to a tab-separated file containing two two columns,
 #' with the input taxon IDs in the first
 #' column, and the corresponding number of known species in the second column.
 #' @param verbose logical: regulates function echoing to console.

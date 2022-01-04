@@ -106,7 +106,7 @@ run_TS <- function(taxlist, taxon, m,
   taxlist$ts.process <- c(taxlist$ts.process,
                           list(taxon = taxon, m = m))
   taxlist$outputIDs  <- ts_recursive(taxlist, verbose)
-  if(verbose) cat("\r", rep(" ", 50), "\r")
+  if(verbose) cat("\r", paste(rep(" ", 80), collapse = ""))
 
   if(!is.null(seq_file)){
     taxlist <- extract_sequences(taxlist, seq_file, verbose)

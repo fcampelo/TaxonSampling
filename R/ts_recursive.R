@@ -38,7 +38,7 @@ ts_recursive <- function(taxlist, verbose = TRUE) {
   m     <- taxlist$ts.process$m
 
   if(verbose) {
-    cat("\r", rep(" ", 80),
+    cat("\r", paste(rep(" ", 80), collapse = ""),
         "\r--> Recursive sampling:",
         paste(rep(".",
                   min(40, ceiling(60 * m/taxlist$ts.params$m))),
