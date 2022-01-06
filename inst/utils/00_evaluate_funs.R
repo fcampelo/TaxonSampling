@@ -1,4 +1,4 @@
-evaluate_TS <- function(x) {
+#evaluate_TS <- function(x) {
   # Collect metrics about the taxon diversity of a sample (outputIDs).
   #
   # Args:
@@ -32,19 +32,18 @@ evaluate_TS <- function(x) {
 library(dplyr)
 
 #Number of reps
-n <- 1
+n <- 10
 
 # preprocess stuff:
-taxlist <- get_taxonomy_counts(taxonomy_path = "data_files/taxdump/",
-                               ids_file      = "data_files/metadata/TaxID2SeqID.txt") %>%
-  get_species_counts(spp_file = "data_files/metadata/TaxID2sppCounts.tsv")
+taxlist <- get_counts(taxonomy_path = "data_files/taxdump/",
+                      ids_file      = "data_files/metadata/TaxID2SeqID.txt")
 
 # Test parameters
 rand <- c("yes", "no", "after_first_round")
 meth <- c("diversity", "balanced")
 samp <- c("agnostic", "known_species")
 repl <- c(TRUE, FALSE)
-m    <- 50 #* (1:8)
+m    <- 50 * (1:8)
 pars <- expand.grid(rand=rand, meth=meth, samp=samp, repl=repl, m = m,
                     stringsAsFactors = FALSE)
 pars <- pars[-which(pars$meth == "balanced" & pars$rand == "after_first_round"), ]
@@ -66,11 +65,11 @@ for (k in 1:nrow(pars)){
                           randomize        = pars$rand[k],
                           replacement      = pars$repl[k],
                           ignoreIDs        = 10090,
-                          requireIDs       = c(9443, 9263, 10091, 9606, 9606),
+                          requireIDs       = 9606,
                           sampling         = pars$samp[k],
                           verbose          = FALSE)
 
-    out[[i]]$perf <- evaluate_TS(out[[i]]$tl)
+    #out[[i]]$perf <- evaluate_TS(out[[i]]$tl)
     out[[i]]$tl$nodes  <- NULL
     out[[i]]$tl$spp_df <- NULL
   }
