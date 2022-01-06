@@ -27,7 +27,7 @@ process_ignoreIDs <- function(taxlist) {
     # Subtract the ignoreIDs from the countIDs.
     for (id in ignoreIDs) {
       parentIDs <- as.character(CHNOSZ::allparents(id, nodes = taxlist$nodes))
-      taxlist$countIDs[parentIDs] <- taxlist$countIDs[parentIDs] - taxlist$countIDs[as.character(id)]
+      taxlist$countIDs[parentIDs] <- taxlist$countIDs[parentIDs] - taxlist$countIDs[id]
     }
     taxlist$countIDs <- taxlist$countIDs[taxlist$countIDs > 0]
 
@@ -40,7 +40,6 @@ process_ignoreIDs <- function(taxlist) {
                             (taxlist$nodes$id %in% names(taxlist$countIDs))]
     }
 
-    # taxlist$ts.process$ignoreIDs <- ignoreIDs
   }
 
   return(taxlist)

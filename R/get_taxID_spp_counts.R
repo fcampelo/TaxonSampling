@@ -49,6 +49,7 @@ get_taxID_spp_counts <- function(taxonomy_path = NULL,
   # ===========================================================================
   # Get nodes table
   if(is.null(nodes)){
+    if(verbose) message('Reading nodes file')
     # read taxonomy file
     odt <- options("datatable.showProgress")
     options(datatable.showProgress = FALSE)
@@ -97,12 +98,12 @@ get_taxID_spp_counts <- function(taxonomy_path = NULL,
   ids    <- unname(unlist(ids[, -c("parent")]))
   ids    <- data.table::data.table(x = ids[ids != "0"])
   spp_df <- ids[, .N, by = c("x")]
-  names(spp_df) <- c("TaxID", "species_count")
+  names(spp_df) <- c("taxID", "species_count")
 
   # If start_from_species is TRUE, add remaining IDs with a count of zero.
-  toadd <- nodes$id[!(nodes$id %in% c("0", spp_df$TaxID))]
+  toadd <- nodes$id[!(nodes$id %in% c("0", spp_df$taxID))]
   spp_df <- rbind(spp_df,
-                  data.table::data.table(TaxID = toadd,
+                  data.table::data.table(taxID = toadd,
                                          species_count = numeric(length(toadd))))
 
   # Save to file

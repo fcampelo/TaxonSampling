@@ -1,7 +1,11 @@
 library(dplyr)
 
+# spp_df <- get_taxID_spp_counts(taxonomy_path = "data_files/taxdump/",
+#                                spp_file = "data_files/metadata/TaxID2sppCounts_2022-01-01.tsv")
+
 taxlist <- get_counts(taxonomy_path = "data_files/taxdump/",
-                      ids_file      = "data_files/metadata/TaxID2SeqID.txt") %>%
+                      ids_file      = "data_files/metadata/TaxID2SeqID.txt",
+                      spp_file      = "data_files/metadata/TaxID2sppCounts_2022-01-01.tsv") %>%
   run_TS(taxon            = 40674,                                     # root taxon: mammalia
          m                = 200,                                       # number of sequences to sample
          seq_file         = "data_files/fasta/mit_vertebrata.fasta",   # multi-fasta file from where sequences should be sampled

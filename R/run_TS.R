@@ -52,7 +52,7 @@ run_TS <- function(taxlist, taxon, m,
   # ===========================================================================
   # Sanity checks
   assertthat::assert_that(is.list(taxlist),
-                          all(c("countIDs", "nodes") %in% names(taxlist)),
+                          inherits(taxlist, "taxonsampling"),
                           is.character(taxon) || is.numeric(taxon),
                           assertthat::is.count(m),
                           is.null(seq_file) ||
@@ -84,10 +84,10 @@ run_TS <- function(taxlist, taxon, m,
   taxlist$ts.params         <- as.list(environment())
   taxlist$ts.params$taxlist <- NULL
 
-  # Force all IDs to integer
-  if(is.character(taxon))      taxlist$ts.params$taxon      <- as.integer(taxon)
-  if(is.character(ignoreIDs))  taxlist$ts.params$ignoreIDs  <- as.integer(ignoreIDs)
-  if(is.character(requireIDs)) taxlist$ts.params$requireIDs <- as.integer(requireIDs)
+  # Force all IDs to character
+  taxlist$ts.params$taxon      <- as.character(taxon)
+  taxlist$ts.params$ignoreIDs  <- as.character(ignoreIDs)
+  taxlist$ts.params$requireIDs <- as.character(requireIDs)
 
   # ===========================================================================
 
@@ -96,7 +96,7 @@ run_TS <- function(taxlist, taxon, m,
   taxlist <- process_requireIDs(taxlist)
 
   # Reduce node information to the necessary only, reduces search time.
-  taxlist$nodes <- taxlist$nodes[taxlist$nodes$id %in% as.numeric(names(taxlist$countIDs)), ]
+  taxlist$nodes <- taxlist$nodes[taxlist$nodes$id %in% names(taxlist$countIDs), ]
 
   # Ensure m <= number of valid ids.
   m <- min(m, length(intersect(taxlist$ids_df$taxID, names(taxlist$countIDs))))
@@ -106,7 +106,7 @@ run_TS <- function(taxlist, taxon, m,
   taxlist$ts.process <- c(taxlist$ts.process,
                           list(taxon = taxon, m = m))
   taxlist$outputIDs  <- ts_recursive(taxlist, verbose)
-  if(verbose) cat("\r", paste(rep(" ", 80), collapse = ""))
+  if(verbose) cat("\r", paste(rep(" ", 40), collapse = ""))
 
   if(!is.null(seq_file)){
     taxlist <- extract_sequences(taxlist, seq_file, verbose)

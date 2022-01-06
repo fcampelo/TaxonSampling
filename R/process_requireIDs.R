@@ -2,7 +2,7 @@ process_requireIDs <- function(taxlist) {
 
   taxlist$ts.process$requireIDs <- numeric()
   requireIDs <- taxlist$ts.params$requireIDs
-  if (!is.null(requireIDs)) {
+  if (!is.null(requireIDs) && length(requireIDs) > 0) {
     # Filter IDs that aren't part of NCBI notation.
     idx <- which(!(requireIDs %in% taxlist$nodes$id))
     if (length(idx) > 0) {

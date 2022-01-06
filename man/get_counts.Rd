@@ -67,8 +67,6 @@ list object of class _taxonsampling_, containing:
     \item `spp_df`: two-column data frame with the input taxon IDs in the
     first column, and the corresponding number of known species in the second
    column. Filtered to have only the IDs present in `$countIDs`.
-   \item `$countSpp`, a numeric vector with the counts of (known) species for each
-   taxon from `taxlist$countIDs`.
 }
 }
 \description{

@@ -53,11 +53,6 @@ summary.taxonsampling <- function(object, ...)
             length(object$countIDs), " elements")
   }
 
-  if("countSpp" %in% names(object) && is.vector(object$countSpp)){
-    message("Element 'countSpp':\tvector with ",
-            length(object$countSpp), " elements")
-  }
-
   if("outputIDs" %in% names(object) && is.vector(object$outputIDs)){
     message("Element 'outputIDs':\tvector with ",
             length(object$outputIDs), " elements")

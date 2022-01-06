@@ -37,11 +37,16 @@ ts_recursive <- function(taxlist, verbose = TRUE) {
   taxon <- taxlist$ts.process$taxon
   m     <- taxlist$ts.process$m
 
+  countSpp <- taxlist$spp_df$species_count
+  names(countSpp) <- taxlist$spp_df$taxID
+
   if(verbose) {
+    # This doesn't mean anything, it just gives the user some
+    # visual feedback
     cat("\r", paste(rep(" ", 80), collapse = ""),
         "\r--> Recursive sampling:",
         paste(rep(".",
-                  min(40, ceiling(60 * m/taxlist$ts.params$m))),
+                  min(30, ceiling(60 * m/taxlist$ts.params$m))),
               collapse = ""))
   }
 
@@ -63,7 +68,7 @@ ts_recursive <- function(taxlist, verbose = TRUE) {
   }
 
   childrenCount    <- taxlist$countIDs[as.character(children)]
-  childrenCountSpp <- taxlist$countSpp[as.character(children)]
+  childrenCountSpp <- countSpp[as.character(children)]
 
   # Sanity check
   # In a few cases, the number of sequences may be greater than the number of
@@ -111,7 +116,7 @@ ts_recursive <- function(taxlist, verbose = TRUE) {
   outputIDs <- character()
   for (id in names(m_i)) {
     if (m_i[id] > 0){
-      if (id == as.character(taxon)){
+      if (id == taxon){
         outputIDs <- c(outputIDs, id)
       } else {
         taxlist$ts.process$m     <- m_i[id]

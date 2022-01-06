@@ -49,8 +49,6 @@
 #'     \item `spp_df`: two-column data frame with the input taxon IDs in the
 #'     first column, and the corresponding number of known species in the second
 #'    column. Filtered to have only the IDs present in `$countIDs`.
-#'    \item `$countSpp`, a numeric vector with the counts of (known) species for each
-#'    taxon from `taxlist$countIDs`.
 #' }
 #'
 #' @export
@@ -96,8 +94,10 @@ get_counts <- function(taxonomy_path = NULL,
   # Load ids from file if required
   if(!is.null(ids_file)) {
     if(file.exists(ids_file)){
+      if(verbose) message('Reading ids file')
       ids_df <- as.data.frame(
         data.table::fread(ids_file, sep = "\t",
+                          colClasses = c("character", "character"),
                           col.names = c("taxID", "seqID"),
                           verbose = FALSE))
     } else {
@@ -107,30 +107,42 @@ get_counts <- function(taxonomy_path = NULL,
     names(ids_df) <- c("taxID", "seqID")
   }
 
+  ids_df[, 1:2] <- lapply(ids_df[, 1:2], function(x) gsub("\\t", "", x))
+
+
   # Load nodes from file if required
   if(is.null(nodes)){
+    if(verbose) message('Reading nodes file')
     nodes <- as.data.frame(
       data.table::fread(paste(taxonomy_path, "nodes.dmp", sep = "/"),
                         sep = "|", strip.white = TRUE,
-                        colClasses = c("numeric", "numeric", "character", rep("NULL", 16)),
+                        colClasses = c("character", "character", "character", rep("NULL", 16)),
                         col.names = c("id", "parent", "level"),
                         verbose = FALSE))
-    nodes$level <- gsub("\\t", "", nodes$level)
   } else {
     names(nodes)[1:3] <- c("id", "parent", "level")
   }
 
+  nodes[, 1:3] <- lapply(nodes[, 1:3], function(x) gsub("\\t", "", x))
+
   # Load ids from file if required
   if(!is.null(spp_file)){
+    if(verbose) message('Reading spp file')
     spp_df <- as.data.frame(
       data.table::fread(spp_file, sep = "\t",
+                        colClasses = c("character", "numeric"),
                         col.names = c("taxID", "species_count"),
                         verbose = FALSE))
   } else if (!is.null(spp_df)){
     names(spp_df)[1:2] <- c("taxID", "species_count")
   } else {
-    spp_df <- get_taxID_spp_counts(taxonomy_path, verbose = verbose)
+    spp_df <- get_taxID_spp_counts(taxonomy_path,
+                                   nodes   = nodes,
+                                   verbose = verbose)
   }
+
+  spp_df$taxID <- gsub("\\t", "", spp_df$taxID)
+
 
   # Return data.table options to previous state
   options(odt)
@@ -167,25 +179,23 @@ get_counts <- function(taxonomy_path = NULL,
     parentage <- table(searchIDs)
     countIDs[names(parentage)] <- countIDs[names(parentage)] + parentage
     searchIDs <- searchIDs[searchIDs != 1]
-    if(verbose) cat("\r", sprintf("--> %06d taxIDs still being counted...", length(searchIDs)))
+    if(verbose) cat("\r", sprintf("--> %06d taxIDs still being counted.", length(searchIDs)))
   }
-  if(verbose) cat("\r", paste(rep(" ", 50), collapse = ""))
+  if(verbose) cat("\r", paste(rep(" ", 40), collapse = ""))
 
   countIDs <- countIDs[countIDs > 0]
 
   # ===========================================================================
   # Filter only the species counts of taxa listed in countIDs
-  spp_df   <- spp_df[spp_df$TaxID %in% names(countIDs), ]
-  countSpp <- spp_df$species_count
-  names(countSpp) <- spp_df$TaxID
+  spp_df   <- spp_df[spp_df$taxID %in% names(countIDs), ]
 
+  # Simplify nodes to reduce overhead
   nodes <- nodes[nodes$id %in% as.numeric(names(countIDs)), ]
 
   taxlist <- list(nodes    = nodes,
                   ids_df   = ids_df,
                   countIDs = countIDs,
-                  spp_df   = spp_df,
-                  countSpp = countSpp)
+                  spp_df   = spp_df)
 
   class(taxlist) <- c(class(taxlist), "taxonsampling")
 
