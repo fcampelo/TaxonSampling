@@ -8,7 +8,7 @@ get_taxID_spp_counts(
   taxonomy_path = NULL,
   nodes = NULL,
   spp_file = NULL,
-  start_from_species = TRUE,
+  start_from_species = FALSE,
   verbose = TRUE
 )
 }
@@ -25,7 +25,7 @@ the NCBI taxonomy structure. This can be generated, e.g., by using
 \item{spp_file}{path to file for saving the species count for each taxon ID
 (saved as a tsv file). Ignored if `NULL`.}
 
-\item{start_from_species}{logical. If `TRUE` (default) the counting starts at
+\item{start_from_species}{logical. If `TRUE` the counting starts at
 the 'species' level - i.e., taxon IDs below species (e.g., 'subspecies')
 receive a count of zero and are not included in the other counts. If
 `FALSE`, counting starts at the terminal nodes of the taxonomy, regardless of

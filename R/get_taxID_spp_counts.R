@@ -12,7 +12,7 @@
 #' [CHNOSZ::getnodes()].
 #' @param spp_file path to file for saving the species count for each taxon ID
 #' (saved as a tsv file). Ignored if `NULL`.
-#' @param start_from_species logical. If `TRUE` (default) the counting starts at
+#' @param start_from_species logical. If `TRUE` the counting starts at
 #' the 'species' level - i.e., taxon IDs below species (e.g., 'subspecies')
 #' receive a count of zero and are not included in the other counts. If
 #' `FALSE`, counting starts at the terminal nodes of the taxonomy, regardless of
@@ -27,7 +27,7 @@
 get_taxID_spp_counts <- function(taxonomy_path = NULL,
                                  nodes    = NULL,
                                  spp_file = NULL,
-                                 start_from_species = TRUE,
+                                 start_from_species = FALSE,
                                  verbose = TRUE){
 
   # ===========================================================================
