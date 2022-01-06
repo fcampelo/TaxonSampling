@@ -96,7 +96,7 @@ get_taxID_spp_counts <- function(taxonomy_path = NULL,
   # Count occurrences of each taxonID in the parentage table
   ids    <- unname(unlist(ids[, -c("parent")]))
   ids    <- data.table::data.table(x = ids[ids != "0"])
-  spp_df <- ids[, .N, by = x]
+  spp_df <- ids[, .N, by = c("x")]
   names(spp_df) <- c("TaxID", "species_count")
 
   # If start_from_species is TRUE, add remaining IDs with a count of zero.
