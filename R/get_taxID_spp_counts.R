@@ -54,7 +54,7 @@ get_taxID_spp_counts <- function(taxonomy_path = NULL,
     options(datatable.showProgress = FALSE)
     nodes <- data.table::fread(paste(taxonomy_path, "nodes.dmp", sep = "/"),
                                sep = "|", strip.white = TRUE,
-                               colClasses = c("numeric", "numeric", "character", rep("NULL", 16)),
+                               colClasses = c("character", "character", "character", rep("NULL", 16)),
                                col.names = c("id", "parent", "level"),
                                verbose = FALSE)
     options(odt)
@@ -63,12 +63,12 @@ get_taxID_spp_counts <- function(taxonomy_path = NULL,
     names(nodes) <- c("id", "parent", "level")
   }
 
-  nodes$level <- gsub("\\t", "", nodes$level)
+  nodes[, 1:3] <- lapply(nodes[, 1:3], function(x) gsub("\\t", "", x))
 
   # Add fictional super-root node "0" (makes it easier to remove later)
-  nodes$parent[nodes$id == 1] <- 0
+  nodes$parent[nodes$id == "1"] <- "0"
   nodes <- rbind(nodes[1, ], nodes)
-  nodes[1, 1:2] <- 0
+  nodes[1, 1:2] <- "0"
 
   # Initialise data.table variable names to prevent warnings
   id     <- NULL
@@ -80,8 +80,8 @@ get_taxID_spp_counts <- function(taxonomy_path = NULL,
   ids <- nodes[-1, 1:2]
   if(start_from_species) ids <- ids[nodes$level[-1] == 'species', ]
 
-  while(any(ids$parent != 0)){
-    if(verbose) cat(sprintf('\r--> Remaining IDs: %10d', sum(ids$parent != 0)))
+  while(any(ids$parent != "0")){
+    if(verbose) cat(sprintf('\r--> Remaining IDs: %10d', sum(ids$parent != "0")))
     # Rename columns to facilitate processing (our query is always called 'id')
     names(ids) <- c(paste0("o", (ncol(ids)-1):1), "id")
     # join the parents of our (updated) 'id' column
@@ -94,15 +94,13 @@ get_taxID_spp_counts <- function(taxonomy_path = NULL,
   }
 
   # Count occurrences of each taxonID in the parentage table
-  ids <- unname(unlist(ids[, -c("parent")]))
-  ids <- table(ids[ids != 0])
-
-  # Build output
-  spp_df <- data.table::data.table(TaxID = names(ids),
-                                   species_count = as.numeric(ids))
+  ids    <- unname(unlist(ids[, -c("parent")]))
+  ids    <- data.table::data.table(x = ids[ids != "0"])
+  spp_df <- ids[, .N, by = x]
+  names(spp_df) <- c("TaxID", "species_count")
 
   # If start_from_species is TRUE, add remaining IDs with a count of zero.
-  toadd <- nodes$id[!(nodes$id %in% c(0, spp_df$TaxID))]
+  toadd <- nodes$id[!(nodes$id %in% c("0", spp_df$TaxID))]
   spp_df <- rbind(spp_df,
                   data.table::data.table(TaxID = toadd,
                                          species_count = numeric(length(toadd))))

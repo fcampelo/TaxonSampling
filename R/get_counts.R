@@ -174,21 +174,11 @@ get_counts <- function(taxonomy_path = NULL,
   countIDs <- countIDs[countIDs > 0]
 
   # ===========================================================================
-  # Process species counts
-
-  if(verbose) message("\rUpdating species counts")
-  # Filter only the Spp counts for taxons listed in countIDs
-  spp_df   <- spp_df[spp_df$taxID %in% names(countIDs), ]
+  # Filter only the species counts of taxa listed in countIDs
+  spp_df   <- spp_df[spp_df$TaxID %in% names(countIDs), ]
   countSpp <- spp_df$species_count
-  names(countSpp) <- spp_df$taxID
+  names(countSpp) <- spp_df$TaxID
 
-  # Species TaxIDs may have a count of zero (depending on how counting is done),
-  # so increment by 1
-  # countSpp[countSpp == 0] <- 1
-
-  # Reduces the search size of nodes to the relevant input taxIDs and their
-  # related ancestors/offspring. Can greatly reduce search/running time for
-  # the remaining functions.
   nodes <- nodes[nodes$id %in% as.numeric(names(countIDs)), ]
 
   taxlist <- list(nodes    = nodes,
