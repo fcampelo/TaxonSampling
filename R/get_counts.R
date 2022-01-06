@@ -20,13 +20,13 @@
 #' `ids_file` is not `NULL`.
 #' @param spp_df two-column data frame with the input taxon IDs in the first
 #' column, and the corresponding number of known species in the second column.
+#' This can be generated using [get_taxID_spp_counts()].
 #' Ignored if `spp_file` is not `NULL`.
 #' @param spp_file path to a tab-separated file containng two two columns,
 #' with the input taxon IDs in the first column, and the corresponding number of
-#' known species in the second column. This can be (i) generated locally by
-#' [get_taxID_spp_counts()] (**note**: this is a very time-consuming function,
-#' and can take a few days to compute); or a relatively recent  downloaded as part of the
-#' package data files using [retrieve_data_files()].
+#' known species in the second column. If both `spp_file` and `spp_df` are `NULL`, then
+#' the counts are computed internally based either on `nodes` or the
+#' taxonomy files under `taxonomy_path`.
 #' @param verbose logical: regulates function echoing to console.
 #' @param nodes data.frame containing the pre-processed information about
 #' the NCBI taxonomy structure. This is generated either by using
@@ -82,10 +82,11 @@ get_counts <- function(taxonomy_path = NULL,
                             (is.character(spp_file) &&
                                length(spp_file) == 1 &&
                                file.exists(spp_file)),
-                          is.null(spp_df) + is.null(spp_file) < 2,
                           is.logical(verbose),
                           length(verbose) == 1,
-                          is.null(nodes) || is.data.frame(nodes))
+                          is.null(nodes) || is.data.frame(nodes),
+                          is.null(nodes) + is.null(taxonomy_path) < 2,
+                          is.null(spp_file) + is.null(spp_df) + is.null(taxonomy_path) < 3)
 
   # ===========================================================================
   # Load required files
@@ -125,8 +126,10 @@ get_counts <- function(taxonomy_path = NULL,
       data.table::fread(spp_file, sep = "\t",
                         col.names = c("taxID", "species_count"),
                         verbose = FALSE))
-  } else {
+  } else if (!is.null(spp_df)){
     names(spp_df)[1:2] <- c("taxID", "species_count")
+  } else {
+    spp_df <- get_taxID_spp_counts(taxonomy_path, verbose = verbose)
   }
 
   # Return data.table options to previous state
@@ -173,7 +176,7 @@ get_counts <- function(taxonomy_path = NULL,
   # ===========================================================================
   # Process species counts
 
-  if(verbose) message("\rCounting species")
+  if(verbose) message("\rUpdating species counts")
   # Filter only the Spp counts for taxons listed in countIDs
   spp_df   <- spp_df[spp_df$taxID %in% names(countIDs), ]
   countSpp <- spp_df$species_count
@@ -181,7 +184,7 @@ get_counts <- function(taxonomy_path = NULL,
 
   # Species TaxIDs may have a count of zero (depending on how counting is done),
   # so increment by 1
-  countSpp[countSpp == 0] <- 1
+  # countSpp[countSpp == 0] <- 1
 
   # Reduces the search size of nodes to the relevant input taxIDs and their
   # related ancestors/offspring. Can greatly reduce search/running time for

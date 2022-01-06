@@ -34,13 +34,13 @@ the ">" line starter) in the second column. Ignored if
 
 \item{spp_file}{path to a tab-separated file containng two two columns,
 with the input taxon IDs in the first column, and the corresponding number of
-known species in the second column. This can be (i) generated locally by
-[get_taxID_spp_counts()] (**note**: this is a very time-consuming function,
-and can take a few days to compute); or a relatively recent  downloaded as part of the
-package data files using [retrieve_data_files()].}
+known species in the second column. If both `spp_file` and `spp_df` are `NULL`, then
+the counts are computed internally based either on `nodes` or the
+taxonomy files under `taxonomy_path`.}
 
 \item{spp_df}{two-column data frame with the input taxon IDs in the first
 column, and the corresponding number of known species in the second column.
+This can be generated using [get_taxID_spp_counts()].
 Ignored if `spp_file` is not `NULL`.}
 
 \item{nodes}{data.frame containing the pre-processed information about

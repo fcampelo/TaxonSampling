@@ -4,18 +4,34 @@
 \alias{get_taxID_spp_counts}
 \title{Count number of species under each taxonomy ID}
 \usage{
-get_taxID_spp_counts(taxonomy_path, spp_file, ncpus = 1)
+get_taxID_spp_counts(
+  taxonomy_path = NULL,
+  nodes = NULL,
+  spp_file = NULL,
+  start_from_species = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{taxonomy_path}{path to folder containing the NCBI taxonomy files
 (i.e., the extracted contents of _taxdump.zip_, which can be downloaded from
 <ftp://ftp.ncbi.nih.gov/pub/taxonomy/> or retrieved using
-[retrieve_NCBI_taxonomy()]).}
+[retrieve_NCBI_taxonomy()]). Ignored if `nodes` is not `NULL`.}
+
+\item{nodes}{data.frame containing the pre-processed information about
+the NCBI taxonomy structure. This can be generated, e.g., by using
+[CHNOSZ::getnodes()].}
 
 \item{spp_file}{path to file for saving the species count for each taxon ID
-(saved as a tsv file)}
+(saved as a tsv file). Ignored if `NULL`.}
 
-\item{ncpus}{number of cores to use for species counting.}
+\item{start_from_species}{logical. If `TRUE` (default) the counting starts at
+the 'species' level - i.e., taxon IDs below species (e.g., 'subspecies')
+receive a count of zero and are not included in the other counts. If
+`FALSE`, counting starts at the terminal nodes of the taxonomy, regardless of
+taxonomic level).}
+
+\item{verbose}{logical: regulates function echoing to console.}
 }
 \value{
 data frame with species counts per taxon ID.
