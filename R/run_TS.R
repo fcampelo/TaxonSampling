@@ -102,11 +102,11 @@ run_TS <- function(taxlist, taxon, m,
   m <- min(m, length(intersect(taxlist$ids_df$taxID, names(taxlist$countIDs))))
 
   # Call the TS algorithm itself.
-  if(verbose) message("Running recursive sampling")
+  if(verbose) message("\rRunning recursive sampling")
   taxlist$ts.process <- c(taxlist$ts.process,
                           list(taxon = taxon, m = m))
   taxlist$outputIDs  <- ts_recursive(taxlist, verbose)
-  if(verbose) cat("\r", paste(rep(" ", 40), collapse = ""))
+  if(verbose) cat("\r", paste(rep(" ", 40), collapse = ""), "\r")
 
   if(!is.null(seq_file)){
     taxlist <- extract_sequences(taxlist, seq_file, verbose)
