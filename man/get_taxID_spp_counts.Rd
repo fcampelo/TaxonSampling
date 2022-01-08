@@ -7,8 +7,9 @@
 get_taxID_spp_counts(
   taxonomy_path = NULL,
   nodes = NULL,
-  spp_file = NULL,
+  out_file = NULL,
   start_from_species = FALSE,
+  what = "spp_counts",
   verbose = TRUE
 )
 }
@@ -22,7 +23,7 @@ get_taxID_spp_counts(
 the NCBI taxonomy structure. This can be generated, e.g., by using
 [CHNOSZ::getnodes()].}
 
-\item{spp_file}{path to file for saving the species count for each taxon ID
+\item{out_file}{path to file for saving the output
 (saved as a tsv file). Ignored if `NULL`.}
 
 \item{start_from_species}{logical. If `TRUE` the counting starts at
@@ -31,10 +32,15 @@ receive a count of zero and are not included in the other counts. If
 `FALSE`, counting starts at the terminal nodes of the taxonomy, regardless of
 taxonomic level).}
 
+\item{what}{what to calculate? Accepts `"spp_counts"` for returning the
+count of species / leaf nodes per taxon ID, or `"ancestry"` for returning
+the ancestry list.}
+
 \item{verbose}{logical: regulates function echoing to console.}
 }
 \value{
-data frame with species counts per taxon ID.
+either a data frame with species counts per taxon ID
+or a list with the ancestry of each taxonomic ID.
 }
 \description{
 Extract the species count for each taxonomy ID in the _nodes_ structure
