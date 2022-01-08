@@ -97,7 +97,7 @@ get_counts <- function(taxonomy_path = NULL,
       if(verbose) message('Reading ids file')
       ids_df <- as.data.frame(
         data.table::fread(ids_file, sep = "\t",
-                          colClasses = c("character", "character"),
+                          colClasses = c("integer", "character"),
                           col.names = c("taxID", "seqID"),
                           verbose = FALSE))
     } else {
@@ -105,9 +105,10 @@ get_counts <- function(taxonomy_path = NULL,
     }
   } else if(!is.null(ids_df)){
     names(ids_df) <- c("taxID", "seqID")
+    ids_df$taxID <- as.integer(ids_df$taxID)
   }
 
-  ids_df[, 1:2] <- lapply(ids_df[, 1:2], function(x) gsub("\\t", "", x))
+  ids_df$seqID <- gsub("\\t", "", ids_df$seqID)
 
 
   # Load nodes from file if required
@@ -116,33 +117,34 @@ get_counts <- function(taxonomy_path = NULL,
     nodes <- as.data.frame(
       data.table::fread(paste(taxonomy_path, "nodes.dmp", sep = "/"),
                         sep = "|", strip.white = TRUE,
-                        colClasses = c("character", "character", "character", rep("NULL", 16)),
+                        colClasses = c("integer", "integer", "character", rep("NULL", 16)),
                         col.names = c("id", "parent", "level"),
                         verbose = FALSE))
   } else {
     names(nodes)[1:3] <- c("id", "parent", "level")
+    nodes$id <- as.integer(nodes$id)
+    nodes$parent <- as.integer(nodes$parent)
   }
 
-  nodes[, 1:3] <- lapply(nodes[, 1:3], function(x) gsub("\\t", "", x))
+  nodes$level <- gsub("\\t", "", nodes$level)
 
   # Load ids from file if required
   if(!is.null(spp_file)){
     if(verbose) message('Reading spp file')
     spp_df <- as.data.frame(
       data.table::fread(spp_file, sep = "\t",
-                        colClasses = c("character", "numeric"),
+                        colClasses = c("integer", "integer"),
                         col.names = c("taxID", "species_count"),
                         verbose = FALSE))
   } else if (!is.null(spp_df)){
     names(spp_df)[1:2] <- c("taxID", "species_count")
+    spp_df$taxID <- as.integer(spp_df$taxID)
+    spp_df$species_count <- as.integer(spp_df$species_count)
   } else {
     spp_df <- get_taxID_spp_counts(taxonomy_path,
                                    nodes   = nodes,
                                    verbose = verbose)
   }
-
-  spp_df$taxID <- gsub("\\t", "", spp_df$taxID)
-
 
   # Return data.table options to previous state
   options(odt)
