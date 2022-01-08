@@ -85,9 +85,9 @@ run_TS <- function(taxlist, taxon, m,
   taxlist$ts.params$taxlist <- NULL
 
   # Force all IDs to character
-  taxlist$ts.params$taxon      <- as.character(taxon)
-  taxlist$ts.params$ignoreIDs  <- as.character(ignoreIDs)
-  taxlist$ts.params$requireIDs <- as.character(requireIDs)
+  taxlist$ts.params$taxon      <- as.integer(taxon)
+  taxlist$ts.params$ignoreIDs  <- as.integer(ignoreIDs)
+  taxlist$ts.params$requireIDs <- as.integer(requireIDs)
 
   # ===========================================================================
 
