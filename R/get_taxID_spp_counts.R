@@ -121,6 +121,7 @@ get_taxID_spp_counts <- function(taxonomy_path = NULL,
     ids[ids == 0L] <- NA
     out <- data.table::transpose(as.list(ids))
     out <- lapply(out, function(x) x[!is.na(x)])
+    # names(out) <- as.character(ids[, 1])
   }
 
 

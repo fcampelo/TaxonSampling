@@ -41,7 +41,7 @@ ts_recursive <- function(taxlist, verbose = TRUE) {
   names(countSpp) <- taxlist$spp_df$taxID
 
   if(verbose) {
-    # This doesn't mean anything, it just gives the user some
+    # This isn't intended to mean much, it just gives the user some
     # visual feedback
     cat("\r", paste(rep(" ", 80), collapse = ""),
         "\r--> Recursive sampling:",
