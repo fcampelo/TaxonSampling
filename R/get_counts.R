@@ -22,19 +22,14 @@
 #' column, and the corresponding number of known species in the second column.
 #' This can be generated using [get_taxID_spp_counts()].
 #' Ignored if `spp_file` is not `NULL`.
-#' @param spp_file path to a tab-separated file containng two two columns,
+#' @param spp_file path to a tab-separated file containing two two columns,
 #' with the input taxon IDs in the first column, and the corresponding number of
 #' known species in the second column. If both `spp_file` and `spp_df` are `NULL`, then
-#' the counts are computed internally based either on `nodes` or the
+#' the counts are computed internally based either on the
 #' taxonomy files under `taxonomy_path`.
 #' @param verbose logical: regulates function echoing to console.
-#' @param nodes data.frame containing the pre-processed information about
-#' the NCBI taxonomy structure. This is generated either by using
-#' [CHNOSZ::getnodes()], or as a result of a previous call to
-#' [get_taxonomy_counts()]. If `nodes` is not `NULL` then `taxonomy_path` is
-#' ignored.
 #' @param start_from_species logical, passed down to [get_taxID_spp_counts()]
-#' (if needed: only if `spp_file` and `spp_file` are `NULL`).
+#' (only if `spp_file` and `spp_file` are `NULL`).
 #'
 #' @return list object of class _taxonsampling_, containing:
 #' \itemize{
@@ -57,13 +52,12 @@
 #'
 #' @importFrom data.table :=
 
-get_counts <- function(taxonomy_path = NULL,
+get_counts <- function(taxonomy_path,
                        ids_file      = NULL,
                        ids_df        = NULL,
                        spp_file      = NULL,
                        spp_df        = NULL,
                        start_from_species = FALSE,
-                       nodes         = NULL,
                        verbose       = TRUE) {
 
   # ===========================================================================
@@ -73,10 +67,8 @@ get_counts <- function(taxonomy_path = NULL,
                           is.null(ids_file) ||
                             (is.character(ids_file) && length(ids_file) == 1),
                           (is.null(ids_df) + is.null(ids_file)) < 2,
-                          is.null(taxonomy_path) ||
-                            (is.character(taxonomy_path) &&
-                               length(taxonomy_path) == 1 &&
-                               dir.exists(taxonomy_path)),
+                          is.character(taxonomy_path),                               length(taxonomy_path) == 1 &&
+                            dir.exists(taxonomy_path),
                           is.null(spp_df) || (
                             is.data.frame(spp_df) &&
                               ncol(spp_df) >= 2 &&
@@ -88,10 +80,7 @@ get_counts <- function(taxonomy_path = NULL,
                           is.logical(verbose),
                           length(verbose) == 1,
                           is.logical(start_from_species),
-                          length(start_from_species) == 1,
-                          is.null(nodes) || is.data.frame(nodes),
-                          is.null(nodes) + is.null(taxonomy_path) < 2,
-                          is.null(spp_file) + is.null(spp_df) + is.null(taxonomy_path) < 3)
+                          length(start_from_species) == 1)
 
   # ===========================================================================
   # Load required files
@@ -110,7 +99,7 @@ get_counts <- function(taxonomy_path = NULL,
     } else {
       stop("File ", ids_file, " not found.")
     }
-  } else if(!is.null(ids_df)){
+  } else {
     names(ids_df) <- c("taxID", "seqID")
     ids_df$taxID <- as.integer(ids_df$taxID)
   }
@@ -118,32 +107,26 @@ get_counts <- function(taxonomy_path = NULL,
   ids_df$seqID <- gsub("\\t", "", ids_df$seqID)
 
 
-  # Load nodes from file if required
-  if(is.null(nodes)){
-    if(verbose) message('Reading nodes file')
-    nodes <- data.table::fread(paste(taxonomy_path, "nodes.dmp", sep = "/"),
-                        sep = "|", strip.white = TRUE,
-                        colClasses = c("integer", "integer", "character", rep("NULL", 16)),
-                        col.names = c("id", "parent", "level"),
-                        verbose = FALSE)
-    if(verbose) message('Reading names file')
-    name <- NULL
-    names <- data.table::fread(paste(taxonomy_path, "names.dmp", sep = "/"),
-                               sep = "|", strip.white = TRUE,
-                               colClasses = c("integer", "character", "NULL", "character", "NULL"),
-                               col.names = c("id", "name", "status"),
-                               verbose = FALSE)
-    names[, 2:3] <- lapply(names[, 2:3], function(x) gsub("\\t", "", x))
-    names <- names[names$status == "scientific name", -c("status")]
-    nodes[names, name := name, on = c("id")]
-
-  } else {
-    names(nodes)[1:4] <- c("id", "parent", "level", "name")
-    nodes$id <- as.integer(nodes$id)
-    nodes$parent <- as.integer(nodes$parent)
-  }
-
+  # Load nodes from file
+  if(verbose) message('Reading nodes file')
+  nodes <- data.table::fread(paste(taxonomy_path, "nodes.dmp", sep = "/"),
+                             sep = "|", strip.white = TRUE,
+                             colClasses = c("integer", "integer", "character", rep("NULL", 16)),
+                             col.names = c("id", "parent", "level"),
+                             verbose = FALSE)
   nodes$level <- gsub("\\t", "", nodes$level)
+
+  if(verbose) message('Reading names file')
+  name <- NULL
+  names <- data.table::fread(paste(taxonomy_path, "names.dmp", sep = "/"),
+                             sep = "|", strip.white = TRUE,
+                             colClasses = c("integer", "character", "NULL", "character", "NULL"),
+                             col.names = c("id", "name", "status"),
+                             verbose = FALSE)
+  names[, 2:3] <- lapply(names[, 2:3], function(x) gsub("\\t", "", x))
+  names <- names[names$status == "scientific name", -c("status")]
+  nodes[names, name := name, on = c("id")]
+
 
   # Load ids from file if required
   if(!is.null(spp_file)){

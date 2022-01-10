@@ -5,13 +5,12 @@
 \title{Return the relevant counts for running TaxonSampling}
 \usage{
 get_counts(
-  taxonomy_path = NULL,
+  taxonomy_path,
   ids_file = NULL,
   ids_df = NULL,
   spp_file = NULL,
   spp_df = NULL,
   start_from_species = FALSE,
-  nodes = NULL,
   verbose = TRUE
 )
 }
@@ -33,10 +32,10 @@ to the ID strings int the multifasta input file, without
 the ">" line starter) in the second column. Ignored if
 `ids_file` is not `NULL`.}
 
-\item{spp_file}{path to a tab-separated file containng two two columns,
+\item{spp_file}{path to a tab-separated file containing two two columns,
 with the input taxon IDs in the first column, and the corresponding number of
 known species in the second column. If both `spp_file` and `spp_df` are `NULL`, then
-the counts are computed internally based either on `nodes` or the
+the counts are computed internally based either on the
 taxonomy files under `taxonomy_path`.}
 
 \item{spp_df}{two-column data frame with the input taxon IDs in the first
@@ -45,13 +44,7 @@ This can be generated using [get_taxID_spp_counts()].
 Ignored if `spp_file` is not `NULL`.}
 
 \item{start_from_species}{logical, passed down to [get_taxID_spp_counts()]
-(if needed: only if `spp_file` and `spp_file` are `NULL`).}
-
-\item{nodes}{data.frame containing the pre-processed information about
-the NCBI taxonomy structure. This is generated either by using
-[CHNOSZ::getnodes()], or as a result of a previous call to
-[get_taxonomy_counts()]. If `nodes` is not `NULL` then `taxonomy_path` is
-ignored.}
+(only if `spp_file` and `spp_file` are `NULL`).}
 
 \item{verbose}{logical: regulates function echoing to console.}
 }
