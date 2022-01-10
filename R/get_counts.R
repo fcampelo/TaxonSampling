@@ -54,6 +54,8 @@
 #' }
 #'
 #' @export
+#'
+#' @importFrom data.table :=
 
 get_counts <- function(taxonomy_path = NULL,
                        ids_file      = NULL,
@@ -119,14 +121,24 @@ get_counts <- function(taxonomy_path = NULL,
   # Load nodes from file if required
   if(is.null(nodes)){
     if(verbose) message('Reading nodes file')
-    nodes <- as.data.frame(
-      data.table::fread(paste(taxonomy_path, "nodes.dmp", sep = "/"),
+    nodes <- data.table::fread(paste(taxonomy_path, "nodes.dmp", sep = "/"),
                         sep = "|", strip.white = TRUE,
                         colClasses = c("integer", "integer", "character", rep("NULL", 16)),
                         col.names = c("id", "parent", "level"),
-                        verbose = FALSE))
+                        verbose = FALSE)
+    if(verbose) message('Reading names file')
+    name <- NULL
+    names <- data.table::fread(paste(taxonomy_path, "names.dmp", sep = "/"),
+                               sep = "|", strip.white = TRUE,
+                               colClasses = c("integer", "character", "NULL", "character", "NULL"),
+                               col.names = c("id", "name", "status"),
+                               verbose = FALSE)
+    names[, 2:3] <- lapply(names[, 2:3], function(x) gsub("\\t", "", x))
+    names <- names[names$status == "scientific name", -c("status")]
+    nodes[names, name := name, on = c("id")]
+
   } else {
-    names(nodes)[1:3] <- c("id", "parent", "level")
+    names(nodes)[1:4] <- c("id", "parent", "level", "name")
     nodes$id <- as.integer(nodes$id)
     nodes$parent <- as.integer(nodes$parent)
   }
