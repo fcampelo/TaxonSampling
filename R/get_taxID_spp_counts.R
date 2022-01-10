@@ -103,7 +103,7 @@ get_taxID_spp_counts <- function(taxonomy_path = NULL,
 
   if (what == "spp_counts"){
     # Count occurrences of each taxonID in the ancestry table
-    message('Extracting species counts')
+    if(verbose) message('Extracting species counts')
     X    <- unname(unlist(ids))
     X    <- data.table::data.table(x = X[X != 0L])
     out <- X[, .N, by = c("x")]
@@ -117,7 +117,7 @@ get_taxID_spp_counts <- function(taxonomy_path = NULL,
             data.frame(taxID = toadd,
                        species_count = integer(length(toadd)))))
   } else {
-    message('Assembling ancestry list')
+    if(verbose) message('Assembling ancestry list')
     ids[ids == 0L] <- NA
     out <- data.table::transpose(as.list(ids))
     out <- lapply(out, function(x) x[!is.na(x)])

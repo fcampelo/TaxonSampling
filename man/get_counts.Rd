@@ -10,6 +10,7 @@ get_counts(
   ids_df = NULL,
   spp_file = NULL,
   spp_df = NULL,
+  start_from_species = FALSE,
   nodes = NULL,
   verbose = TRUE
 )
@@ -42,6 +43,9 @@ taxonomy files under `taxonomy_path`.}
 column, and the corresponding number of known species in the second column.
 This can be generated using [get_taxID_spp_counts()].
 Ignored if `spp_file` is not `NULL`.}
+
+\item{start_from_species}{logical, passed down to [get_taxID_spp_counts()]
+(if needed: only if `spp_file` and `spp_file` are `NULL`).}
 
 \item{nodes}{data.frame containing the pre-processed information about
 the NCBI taxonomy structure. This is generated either by using

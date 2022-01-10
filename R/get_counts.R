@@ -33,6 +33,8 @@
 #' [CHNOSZ::getnodes()], or as a result of a previous call to
 #' [get_taxonomy_counts()]. If `nodes` is not `NULL` then `taxonomy_path` is
 #' ignored.
+#' @param start_from_species logical, passed down to [get_taxID_spp_counts()]
+#' (if needed: only if `spp_file` and `spp_file` are `NULL`).
 #'
 #' @return list object of class _taxonsampling_, containing:
 #' \itemize{
@@ -58,6 +60,7 @@ get_counts <- function(taxonomy_path = NULL,
                        ids_df        = NULL,
                        spp_file      = NULL,
                        spp_df        = NULL,
+                       start_from_species = FALSE,
                        nodes         = NULL,
                        verbose       = TRUE) {
 
@@ -82,6 +85,8 @@ get_counts <- function(taxonomy_path = NULL,
                                file.exists(spp_file)),
                           is.logical(verbose),
                           length(verbose) == 1,
+                          is.logical(start_from_species),
+                          length(start_from_species) == 1,
                           is.null(nodes) || is.data.frame(nodes),
                           is.null(nodes) + is.null(taxonomy_path) < 2,
                           is.null(spp_file) + is.null(spp_df) + is.null(taxonomy_path) < 3)
@@ -143,7 +148,8 @@ get_counts <- function(taxonomy_path = NULL,
   } else {
     spp_df <- get_taxID_spp_counts(taxonomy_path,
                                    nodes   = nodes,
-                                   verbose = verbose)
+                                   verbose = verbose,
+                                   start_from_species = start_from_species)
   }
 
   # Return data.table options to previous state
