@@ -3,6 +3,7 @@
 S3method(plot,taxonsampling)
 S3method(summary,taxonsampling)
 export(get_counts)
+export(get_summary_df)
 export(get_taxID_spp_counts)
 export(retrieve_NCBI_taxonomy)
 export(retrieve_data_files)
