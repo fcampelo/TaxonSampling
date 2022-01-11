@@ -113,14 +113,14 @@ ts_recursive <- function(taxlist, verbose = TRUE) {
                              childrenCount    = childrenCount,
                              childrenCountSpp = childrenCountSpp))
 
-  outputIDs <- character()
+  outputIDs <- integer()
   for (id in names(m_i)) {
     if (m_i[id] > 0){
       if (id == taxon){
-        outputIDs <- c(outputIDs, id)
+        outputIDs <- c(outputIDs, as.integer(id))
       } else {
         taxlist$ts.process$m     <- m_i[id]
-        taxlist$ts.process$taxon <- id
+        taxlist$ts.process$taxon <- as.integer(id)
         outputIDs <- c(outputIDs, ts_recursive(taxlist, verbose))
       }
     }
