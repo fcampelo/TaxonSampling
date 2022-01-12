@@ -18,42 +18,50 @@
 #'
 
 get_summary_df <- function(taxlist){
+
+  assertthat::assert_that(inherits(taxlist, "taxonsampling"))
+
   # Get ancestry list of (filtered) nodes
   ancestry <- get_taxID_spp_counts(nodes = taxlist$nodes,
                                    start_from_species = FALSE,
                                    what = "ancestry",
                                    verbose = FALSE)
 
-  # Isolate only ancestries of taxIDs with sequences
-  idx <- which(sapply(ancestry,
-                      function(x, tax){(tax %in% x)},
-                      tax = taxlist$ts.params$taxon))
-
-  X <- table(unlist(ancestry[idx]))
-  X <- data.table::data.table(taxID = as.integer(names(X)),
-                              seq_count = as.integer(X))
-  # Remove taxIDs above the root taxon
-  torm <- CHNOSZ::allparents(taxlist$ts.params$taxon, nodes = taxlist$nodes)
-  X <- X[!(X$taxID %in% torm), ]
 
   # Isolate only ancestries of sampled taxIDs
   idx <- which(sapply(ancestry,
-                      function(x, ids){any(ids %in% x)},
+                      function(x, ids){x[[1]] %in% ids},
                       ids = taxlist$outputIDs))
 
-  Y <- table(unlist(ancestry[idx]))
-  Y <- data.table::data.table(taxID = as.integer(names(Y)),
-                              sample_count = as.integer(Y))
+  samples <- table(unlist(ancestry[idx]))
+  samples <- data.table::data.table(taxID = as.integer(names(samples)),
+                                    sample_count = as.integer(samples))
 
   # Prepare nodes for joining
   nodes <- taxlist$nodes[, -2]
   names(nodes)[1] <- "taxID"
 
-  # Join all info
-  X <- Y[X, on = "taxID"]
-  X <- data.table::as.data.table(taxlist$spp_df)[X, on = "taxID"]
-  X <- nodes[X, on = "taxID"]
-  X$sample_count <- ifelse(is.na(X$sample_count), 0, X$sample_count)
+  # Get sequence counts
+  seqs <- data.table::data.table(taxID     = as.integer(names(taxlist$countIDs)),
+                                 seq_count = as.integer(taxlist$countIDs))
 
-  return(as.data.frame(X[, c(1:4,6,5)]))
+  # Get species counts
+  spps <- data.table::as.data.table(taxlist$spp_df)
+
+  # Join all info
+  out <- seqs[spps, on = "taxID"]
+  out <- samples[out, on = "taxID"]
+  out <- nodes[out, on = "taxID"]
+  out$sample_count <- ifelse(is.na(out$sample_count), 0, out$sample_count)
+
+  # Filter only ancestries of taxIDs related to the root node
+  idx <- which(sapply(ancestry,
+                      function(x, tax){(tax %in% x) && (x[[1]] != tax)},
+                      tax = taxlist$ts.params$taxon))
+
+  ids <- sapply(ancestry[idx], function(x){x[[1]]})
+  out <- out[out$taxID %in% ids, ]
+
+  # torm <- CHNOSZ::allparents(taxlist$ts.params$taxon, nodes = taxlist$nodes)
+  return(as.data.frame(out[, c(1:3,6:4)]))
 }

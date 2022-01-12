@@ -12,11 +12,11 @@ seq_file      <- "data_files/fasta/mit_vertebrata.fasta"
 # dt <- Sys.time() - t0
 # message("\nElapsed time: ", dt, " ", units(dt))
 
-taxlist <- get_counts(taxonomy_path = taxonomy_path,
+counts <- get_counts(taxonomy_path = taxonomy_path,
                       ids_file      = ids_file,
-                      # sff_df        = spp_df,
+                      # spp_df        = spp_df,
                       spp_file      = spp_file)
-taxlist <- run_TS(taxlist,
+taxlist <- run_TS(taxlist          = counts,
                   taxon            = 40674,
                   m                = 500,
                   seq_file         = seq_file,
