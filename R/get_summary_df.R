@@ -62,6 +62,5 @@ get_summary_df <- function(taxlist){
   ids <- sapply(ancestry[idx], function(x){x[[1]]})
   out <- out[out$taxID %in% ids, ]
 
-  # torm <- CHNOSZ::allparents(taxlist$ts.params$taxon, nodes = taxlist$nodes)
   return(as.data.frame(out[, c(1:3,6:4)]))
 }
