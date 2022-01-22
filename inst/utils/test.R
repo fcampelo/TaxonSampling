@@ -13,20 +13,23 @@ seq_file      <- "data_files/fasta/mit_vertebrata.fasta"
 # message("\nElapsed time: ", dt, " ", units(dt))
 
 counts <- get_counts(taxonomy_path = taxonomy_path,
-                      ids_file      = ids_file,
-                      # spp_df        = spp_df,
-                      spp_file      = spp_file)
-taxlist <- run_TS(taxlist          = counts,
-                  taxon            = 40674,
-                  m                = 500,
-                  seq_file         = seq_file,
-                  out_file         = NULL,
-                  method           = "diversity",
-                  randomize        = "after_first_round",
-                  replacement      = FALSE,
-                  ignoreIDs        = NULL,
-                  requireIDs       = NULL,
-                  sampling         = "agnostic")
+                     ids_file      = ids_file,
+                     # spp_df        = spp_df,
+                     spp_file      = spp_file)
+ts_out <- run_TS(taxlist          = counts,
+                 taxon            = 40674,
+                 m                = 500,
+                 seq_file         = seq_file,
+                 out_file         = NULL,
+                 method           = "diversity",
+                 randomize        = "after_first_round",
+                 replacement      = FALSE,
+                 ignoreIDs        = NULL,
+                 requireIDs       = NULL,
+                 sampling         = "agnostic")
 
-#summary(taxlist)
-#plot(taxlist)
+# summary(ts_out)
+# plot(ts_out)
+# extract_taxlevel(taxIDs = ts_out$outputIDs,
+#                  taxlevel = "order",
+#                  nodes = ts_out$nodes)
