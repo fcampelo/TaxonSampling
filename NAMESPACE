@@ -2,6 +2,7 @@
 
 S3method(plot,taxonsampling)
 S3method(summary,taxonsampling)
+export(extract_taxlevel)
 export(get_counts)
 export(get_summary_df)
 export(get_taxID_spp_counts)
